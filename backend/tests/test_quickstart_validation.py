@@ -1,4 +1,5 @@
 """Validação ponta a ponta dos 6 cenários descritos em specs/001-member-management/quickstart.md."""
+from datetime import date
 import pytest
 from fastapi import HTTPException
 from src.domain.enums.member_enums import MemberRole, MemberStatus
@@ -26,6 +27,7 @@ def test_quickstart_all_scenarios(memory_db):
         phone="11999990001",
         email="carlos@exemplo.com",
         role=MemberRole.LEADER,
+        birth_date=date(1990, 5, 15),
     )
     carlos = create_member(carlos_payload, caller_role=MemberRole.LEADER, repo=repo)
     assert carlos.name == "Carlos Eduardo"
@@ -41,6 +43,7 @@ def test_quickstart_all_scenarios(memory_db):
         name="Marcos Souza",
         phone="11999990001",  # Mesmo número do Carlos
         role=MemberRole.NORMAL,
+        birth_date=date(1992, 8, 20),
     )
     with pytest.raises(HTTPException) as exc_info:
         create_member(marcos_payload, caller_role=MemberRole.LEADER, repo=repo)
@@ -52,7 +55,7 @@ def test_quickstart_all_scenarios(memory_db):
     # =========================================================================
     # Cadastra mais um membro do núcleo
     create_member(
-        CreateMemberRequest(name="Ana Paula", phone="11999990002", role=MemberRole.CORE),
+        CreateMemberRequest(name="Ana Paula", phone="11999990002", role=MemberRole.CORE, birth_date=date(1994, 11, 2)),
         caller_role=MemberRole.LEADER,
         repo=repo,
     )
@@ -79,6 +82,7 @@ def test_quickstart_all_scenarios(memory_db):
         phone="11999990001",
         email="carlos.silva@exemplo.com",
         role=MemberRole.CORE,
+        birth_date=date(1990, 5, 15),
     )
     carlos_updated = update_member(carlos.id, update_payload, caller_role=MemberRole.LEADER, repo=repo)
     assert carlos_updated.name == "Carlos Eduardo da Silva"
@@ -112,7 +116,11 @@ def test_quickstart_all_scenarios(memory_db):
     # =========================================================================
     # Normal tentando cadastrar -> 403
     with pytest.raises(HTTPException) as exc_403_post:
-        create_member(CreateMemberRequest(name="Tentativa", phone="11988880000"), caller_role=MemberRole.NORMAL, repo=repo)
+        create_member(
+            CreateMemberRequest(name="Tentativa", phone="11988880000", birth_date=date(1990, 1, 1)),
+            caller_role=MemberRole.NORMAL,
+            repo=repo,
+        )
     assert exc_403_post.value.status_code == 403
 
     # Normal tentando editar -> 403

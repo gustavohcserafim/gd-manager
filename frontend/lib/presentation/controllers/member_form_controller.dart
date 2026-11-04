@@ -13,6 +13,7 @@ class MemberFormController extends ChangeNotifier {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   MemberRole selectedRole = MemberRole.normal;
+  DateTime? selectedBirthDate;
 
   bool _isLoading = false;
   String? _errorMessage;
@@ -28,6 +29,7 @@ class MemberFormController extends ChangeNotifier {
       phoneController.text = editingMember!.phone;
       emailController.text = editingMember!.email ?? '';
       selectedRole = editingMember!.role;
+      selectedBirthDate = editingMember!.birthDate;
     }
   }
 
@@ -36,8 +38,21 @@ class MemberFormController extends ChangeNotifier {
   Member? get savedMember => _savedMember;
   bool get isEditing => editingMember != null;
 
+  String? get formattedBirthDate {
+    if (selectedBirthDate == null) return null;
+    final day = selectedBirthDate!.day.toString().padLeft(2, '0');
+    final month = selectedBirthDate!.month.toString().padLeft(2, '0');
+    final year = selectedBirthDate!.year.toString().padLeft(4, '0');
+    return '$day/$month/$year';
+  }
+
   void setRole(MemberRole role) {
     selectedRole = role;
+    notifyListeners();
+  }
+
+  void setBirthDate(DateTime date) {
+    selectedBirthDate = date;
     notifyListeners();
   }
 
@@ -58,6 +73,25 @@ class MemberFormController extends ChangeNotifier {
       return false;
     }
 
+    if (selectedBirthDate == null) {
+      _errorMessage = 'Data de nascimento é obrigatória.';
+      notifyListeners();
+      return false;
+    }
+
+    final today = DateTime.now();
+    if (selectedBirthDate!.isAfter(today)) {
+      _errorMessage = 'Data de nascimento não pode ser no futuro.';
+      notifyListeners();
+      return false;
+    }
+
+    if (selectedBirthDate!.year < 1900) {
+      _errorMessage = 'Ano de nascimento deve ser a partir de 1900.';
+      notifyListeners();
+      return false;
+    }
+
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -71,6 +105,7 @@ class MemberFormController extends ChangeNotifier {
           phone: phone,
           email: email,
           role: selectedRole,
+          birthDate: selectedBirthDate!,
         );
       } else {
         _savedMember = await createMemberUseCase(
@@ -78,6 +113,7 @@ class MemberFormController extends ChangeNotifier {
           phone: phone,
           email: email,
           role: selectedRole,
+          birthDate: selectedBirthDate!,
         );
       }
       _isLoading = false;

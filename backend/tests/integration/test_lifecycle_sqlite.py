@@ -1,3 +1,4 @@
+from datetime import date
 from src.domain.entities.member import Member
 from src.domain.enums.member_enums import MemberStatus
 from src.infrastructure.database.sqlite_member_repository import SqliteMemberRepository
@@ -5,7 +6,7 @@ from src.infrastructure.database.sqlite_member_repository import SqliteMemberRep
 
 def test_sqlite_deactivate_and_reactivate(memory_db):
     repo = SqliteMemberRepository(memory_db)
-    m = Member.create(name="Mariana Lopes", phone="11977770001")
+    m = Member.create(name="Mariana Lopes", phone="11977770001", birth_date=date(1996, 6, 6))
     repo.create(m)
 
     # Inativa

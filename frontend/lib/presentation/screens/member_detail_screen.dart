@@ -20,6 +20,13 @@ class MemberDetailScreen extends StatelessWidget {
     this.onReactivate,
   });
 
+  String _formatBirthDate(DateTime dt) {
+    final d = dt.day.toString().padLeft(2, '0');
+    final m = dt.month.toString().padLeft(2, '0');
+    final y = dt.year.toString().padLeft(4, '0');
+    return '$d/$m/$y';
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
@@ -84,6 +91,25 @@ class MemberDetailScreen extends StatelessWidget {
                               ),
                             ),
                           ),
+                          if (member.isBirthdayToday) ...[
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.amber.shade100,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.amber.shade500),
+                              ),
+                              child: Text(
+                                '🎂 Hoje!',
+                                style: TextStyle(
+                                  color: Colors.amber.shade900,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ],
@@ -91,7 +117,7 @@ class MemberDetailScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
 
-                // Cartão de dados de contato
+                // Cartão de dados de contato e aniversário
                 Card(
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   elevation: 1,
@@ -101,13 +127,24 @@ class MemberDetailScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Informações de Contato',
+                          'Informações do Membro',
                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                         ),
                         const Divider(height: 20),
                         ListTile(
                           contentPadding: EdgeInsets.zero,
-                          leading: const Icon(Icons.phone, color: Colors.blueGrey),
+                          leading: const Icon(Icons.cake_outlined, color: Colors.blueGrey),
+                          title: const Text('Data de Nascimento & Idade', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                          subtitle: Text(
+                            member.birthDate != null
+                                ? '${_formatBirthDate(member.birthDate!)} (${member.age ?? 0} anos)'
+                                : 'Data não informada',
+                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                        ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: const Icon(Icons.phone_outlined, color: Colors.blueGrey),
                           title: const Text('Telefone / WhatsApp', style: TextStyle(fontSize: 12, color: Colors.grey)),
                           subtitle: Text(
                             member.phone,
@@ -117,7 +154,7 @@ class MemberDetailScreen extends StatelessWidget {
                         if (member.email != null)
                           ListTile(
                             contentPadding: EdgeInsets.zero,
-                            leading: const Icon(Icons.email, color: Colors.blueGrey),
+                            leading: const Icon(Icons.email_outlined, color: Colors.blueGrey),
                             title: const Text('E-mail', style: TextStyle(fontSize: 12, color: Colors.grey)),
                             subtitle: Text(
                               member.email!,

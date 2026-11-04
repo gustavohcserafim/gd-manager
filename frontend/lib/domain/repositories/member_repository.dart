@@ -7,12 +7,14 @@ abstract class MemberRepository {
     required String phone,
     String? email,
     required MemberRole role,
+    required DateTime birthDate,
   });
 
   Future<List<Member>> getMembers({
     MemberStatus? status,
     MemberRole? role,
     String? search,
+    int? birthdayMonth,
   });
 
   Future<Member> getMemberById(String id);
@@ -23,9 +25,12 @@ abstract class MemberRepository {
     required String phone,
     String? email,
     required MemberRole role,
+    required DateTime birthDate,
   });
 
   Future<Member> deactivateMember(String id);
 
   Future<Member> reactivateMember(String id);
+
+  Future<List<Member>> getUpcomingBirthdays({int days = 30});
 }

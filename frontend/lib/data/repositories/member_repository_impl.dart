@@ -14,12 +14,14 @@ class MemberRepositoryImpl implements MemberRepository {
     required String phone,
     String? email,
     required MemberRole role,
+    required DateTime birthDate,
   }) {
     return remoteDataSource.createMember(
       name: name,
       phone: phone,
       email: email,
       role: role,
+      birthDate: birthDate,
     );
   }
 
@@ -28,11 +30,13 @@ class MemberRepositoryImpl implements MemberRepository {
     MemberStatus? status,
     MemberRole? role,
     String? search,
+    int? birthdayMonth,
   }) {
     return remoteDataSource.getMembers(
       status: status,
       role: role,
       search: search,
+      birthdayMonth: birthdayMonth,
     );
   }
 
@@ -48,6 +52,7 @@ class MemberRepositoryImpl implements MemberRepository {
     required String phone,
     String? email,
     required MemberRole role,
+    required DateTime birthDate,
   }) {
     return remoteDataSource.updateMember(
       id: id,
@@ -55,6 +60,7 @@ class MemberRepositoryImpl implements MemberRepository {
       phone: phone,
       email: email,
       role: role,
+      birthDate: birthDate,
     );
   }
 
@@ -66,5 +72,9 @@ class MemberRepositoryImpl implements MemberRepository {
   @override
   Future<Member> reactivateMember(String id) {
     return remoteDataSource.reactivateMember(id);
+  }
+
+  Future<List<Member>> getUpcomingBirthdays({int days = 30}) {
+    return remoteDataSource.getUpcomingBirthdays(days: days);
   }
 }

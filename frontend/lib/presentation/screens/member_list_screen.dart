@@ -3,6 +3,7 @@ import '../../domain/enums/member_enums.dart';
 import '../controllers/member_list_controller.dart';
 import '../controllers/session_context_controller.dart';
 import '../widgets/member_card.dart';
+import '../widgets/upcoming_birthdays_section.dart';
 import '../widgets/user_role_selector_bar.dart';
 
 class MemberListScreen extends StatefulWidget {
@@ -26,6 +27,11 @@ class MemberListScreen extends StatefulWidget {
 class _MemberListScreenState extends State<MemberListScreen> {
   final TextEditingController _searchController = TextEditingController();
 
+  static const _monthsShort = [
+    'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+    'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -34,7 +40,6 @@ class _MemberListScreenState extends State<MemberListScreen> {
   }
 
   void _onSessionChanged() {
-    // Se o perfil alternar para Normal e o filtro estiver em Inativo, reseta para Ativo
     if (!widget.sessionController.canManage &&
         widget.listController.selectedStatus == MemberStatus.inactive) {
       widget.listController.setStatus(MemberStatus.active);
@@ -75,9 +80,20 @@ class _MemberListScreenState extends State<MemberListScreen> {
             children: [
               UserRoleSelectorBar(sessionController: widget.sessionController),
 
+              // Seção de Próximos Aniversariantes no topo
+              if (!isInactiveFilter)
+                UpcomingBirthdaysSection(
+                  members: widget.listController.upcomingBirthdays,
+                  onSelectMember: (id) {
+                    if (widget.onSelectMember != null) {
+                      widget.onSelectMember!(id);
+                    }
+                  },
+                ),
+
               // Barra de pesquisa
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 6),
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
@@ -156,7 +172,37 @@ class _MemberListScreenState extends State<MemberListScreen> {
                 ),
               ),
 
-              const Divider(height: 16),
+              // Barra de filtro por mês de aniversário
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                child: Row(
+                  children: [
+                    const Icon(Icons.cake_outlined, size: 16, color: Colors.blueGrey),
+                    const SizedBox(width: 8),
+                    FilterChip(
+                      label: const Text('Todos os meses'),
+                      selected: widget.listController.selectedBirthdayMonth == null,
+                      onSelected: (_) => widget.listController.setBirthdayMonth(null),
+                    ),
+                    const SizedBox(width: 6),
+                    ...List.generate(12, (index) {
+                      final month = index + 1;
+                      final isSelected = widget.listController.selectedBirthdayMonth == month;
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 6.0),
+                        child: FilterChip(
+                          label: Text(_monthsShort[index]),
+                          selected: isSelected,
+                          onSelected: (_) => widget.listController.setBirthdayMonth(isSelected ? null : month),
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+              ),
+
+              const Divider(height: 12),
 
               // Lista ou Empty State
               Expanded(
@@ -201,7 +247,9 @@ class _MemberListScreenState extends State<MemberListScreen> {
                                       Text(
                                         isInactiveFilter
                                             ? 'Nenhum membro inativo encontrado.'
-                                            : 'Nenhum membro cadastrado.',
+                                            : widget.listController.selectedBirthdayMonth != null
+                                                ? 'Nenhum membro faz aniversário neste mês.'
+                                                : 'Nenhum membro cadastrado.',
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,

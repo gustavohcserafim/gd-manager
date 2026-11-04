@@ -12,6 +12,7 @@ class StubUpdateMemberRepository implements MemberRepository {
     required String phone,
     String? email,
     required MemberRole role,
+    required DateTime birthDate,
   }) async {
     return Member(
       id: id,
@@ -21,6 +22,7 @@ class StubUpdateMemberRepository implements MemberRepository {
       role: role,
       status: MemberStatus.active,
       initials: 'JL',
+      birthDate: birthDate,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
@@ -35,15 +37,16 @@ class StubUpdateMemberRepository implements MemberRepository {
       role: MemberRole.normal,
       status: MemberStatus.active,
       initials: 'JL',
+      birthDate: DateTime(1993, 2, 10),
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
   }
 
   @override
-  Future<Member> createMember({required String name, required String phone, String? email, required MemberRole role}) async => throw UnimplementedError();
+  Future<Member> createMember({required String name, required String phone, String? email, required MemberRole role, required DateTime birthDate}) async => throw UnimplementedError();
   @override
-  Future<List<Member>> getMembers({MemberStatus? status, MemberRole? role, String? search}) async => throw UnimplementedError();
+  Future<List<Member>> getMembers({MemberStatus? status, MemberRole? role, String? search, int? birthdayMonth}) async => throw UnimplementedError();
   @override
   Future<Member> deactivateMember(String id) async => throw UnimplementedError();
   @override
@@ -60,9 +63,11 @@ void main() {
       name: 'João Lucas Lima',
       phone: '11900002222',
       role: MemberRole.core,
+      birthDate: DateTime(1993, 2, 10),
     );
 
     expect(updated.name, 'João Lucas Lima');
     expect(updated.role, MemberRole.core);
+    expect(updated.birthDate, DateTime(1993, 2, 10));
   });
 }

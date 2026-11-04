@@ -1,3 +1,4 @@
+from datetime import date
 import pytest
 from src.domain.entities.member import Member
 from src.domain.enums.member_enums import MemberRole, MemberStatus
@@ -8,8 +9,8 @@ from backend.tests.unit.test_create_member_use_case import InMemoryMemberReposit
 
 def test_get_members_returns_all_active_by_default():
     repo = InMemoryMemberRepository()
-    m1 = Member.create(name="Carlos Líder", phone="11999990001", role=MemberRole.LEADER)
-    m2 = Member.create(name="Maria Núcleo", phone="11999990002", role=MemberRole.CORE)
+    m1 = Member.create(name="Carlos Líder", phone="11999990001", role=MemberRole.LEADER, birth_date=date(1990, 1, 1))
+    m2 = Member.create(name="Maria Núcleo", phone="11999990002", role=MemberRole.CORE, birth_date=date(1991, 2, 2))
     repo.create(m1)
     repo.create(m2)
 
@@ -31,9 +32,9 @@ def test_get_members_filter_inactive_as_normal_raises_unauthorized():
 
 def test_get_members_filter_by_role_and_search():
     repo = InMemoryMemberRepository()
-    m1 = Member.create(name="Ana Maria", phone="11999990001", role=MemberRole.NORMAL)
-    m2 = Member.create(name="Lucas Silva", phone="11999990002", role=MemberRole.NORMAL)
-    m3 = Member.create(name="Ana Clara", phone="11999990003", role=MemberRole.LEADER)
+    m1 = Member.create(name="Ana Maria", phone="11999990001", role=MemberRole.NORMAL, birth_date=date(1992, 3, 3))
+    m2 = Member.create(name="Lucas Silva", phone="11999990002", role=MemberRole.NORMAL, birth_date=date(1993, 4, 4))
+    m3 = Member.create(name="Ana Clara", phone="11999990003", role=MemberRole.LEADER, birth_date=date(1994, 5, 5))
     repo.create(m1)
     repo.create(m2)
     repo.create(m3)
@@ -48,3 +49,19 @@ def test_get_members_filter_by_role_and_search():
     search_ana = use_case.execute(caller_role=MemberRole.LEADER, search="Ana")
     assert len(search_ana) == 2
     assert all("Ana" in m.name for m in search_ana)
+
+
+def test_get_members_filter_by_birthday_month():
+    repo = InMemoryMemberRepository()
+    m1 = Member.create(name="Aniversariante Maio", phone="11999990001", role=MemberRole.NORMAL, birth_date=date(1990, 5, 10))
+    m2 = Member.create(name="Aniversariante Junho", phone="11999990002", role=MemberRole.NORMAL, birth_date=date(1991, 6, 20))
+    m3 = Member.create(name="Outro Aniversariante Maio", phone="11999990003", role=MemberRole.CORE, birth_date=date(1995, 5, 25))
+    repo.create(m1)
+    repo.create(m2)
+    repo.create(m3)
+
+    use_case = GetMembersUseCase(repo)
+    may_members = use_case.execute(caller_role=MemberRole.NORMAL, birthday_month=5)
+    assert len(may_members) == 2
+    assert {m.name for m in may_members} == {"Aniversariante Maio", "Outro Aniversariante Maio"}
+

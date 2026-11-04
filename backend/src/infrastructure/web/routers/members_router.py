@@ -13,6 +13,7 @@ from src.application.dtos.create_member_dto import CreateMemberRequest, MemberRe
 from src.application.dtos.update_member_dto import UpdateMemberRequest
 from src.application.use_cases.create_member_use_case import CreateMemberUseCase
 from src.application.use_cases.get_members_use_case import GetMembersUseCase
+from src.application.use_cases.get_upcoming_birthdays_use_case import GetUpcomingBirthdaysUseCase
 from src.application.use_cases.update_member_use_case import GetMemberByIdUseCase, UpdateMemberUseCase
 from src.application.use_cases.lifecycle_use_cases import DeactivateMemberUseCase, ReactivateMemberUseCase
 from src.infrastructure.web.dependencies import get_current_role, require_manager_role
@@ -46,6 +47,7 @@ def list_members(
     status: Optional[MemberStatus] = Query(default=MemberStatus.ACTIVE),
     role: Optional[MemberRole] = Query(default=None),
     search: Optional[str] = Query(default=None),
+    birthday_month: Optional[int] = Query(default=None, ge=1, le=12, description="Mês do aniversário (1 a 12)"),
     caller_role: MemberRole = Depends(get_current_role),
     repo: MemberRepository = Depends(get_repository),
 ):
@@ -53,6 +55,7 @@ def list_members(
         resolved_status = MemberStatus.ACTIVE if not isinstance(status, MemberStatus) and status is not None and not isinstance(status, str) else status
         resolved_role = None if not isinstance(role, MemberRole) and role is not None and not isinstance(role, str) else role
         resolved_search = None if not isinstance(search, str) and search is not None else search
+        resolved_month = birthday_month if isinstance(birthday_month, int) else None
 
         use_case = GetMembersUseCase(repo)
         return use_case.execute(
@@ -60,9 +63,21 @@ def list_members(
             status=resolved_status,
             role=resolved_role,
             search=resolved_search,
+            birthday_month=resolved_month,
         )
     except UnauthorizedRoleException as e:
         raise HTTPException(status_code=http_status.HTTP_403_FORBIDDEN, detail=e.message)
+
+
+@router.get("/birthdays/upcoming", response_model=List[MemberResponse], status_code=http_status.HTTP_200_OK)
+def get_upcoming_birthdays(
+    days: int = Query(default=30, ge=1, le=365, description="Janela de dias para próximos aniversários"),
+    caller_role: MemberRole = Depends(get_current_role),
+    repo: MemberRepository = Depends(get_repository),
+):
+    resolved_days = days if isinstance(days, int) else 30
+    use_case = GetUpcomingBirthdaysUseCase(repo)
+    return use_case.execute(days=resolved_days)
 
 
 @router.get("/{id}", response_model=MemberResponse, status_code=http_status.HTTP_200_OK)

@@ -10,9 +10,14 @@ class ApiClient {
 
   ApiClient({
     http.Client? client,
-    this.baseUrl = 'http://localhost:8000/api/v1',
+    String? baseUrl,
     this.currentRole = MemberRole.leader,
-  }) : client = client ?? http.Client();
+  })  : client = client ?? http.Client(),
+        baseUrl = baseUrl ??
+            const String.fromEnvironment(
+              'API_URL',
+              defaultValue: 'http://localhost:8000/api/v1',
+            );
 
   void updateRole(MemberRole newRole) {
     currentRole = newRole;

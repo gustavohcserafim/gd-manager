@@ -1,3 +1,4 @@
+from datetime import date
 import pytest
 from fastapi import HTTPException
 from src.domain.enums.member_enums import MemberRole, MemberStatus
@@ -13,6 +14,7 @@ def test_post_member_success_returns_201_and_schema(memory_db):
         phone="11987654321",
         email="ana.silva@exemplo.com",
         role=MemberRole.LEADER,
+        birth_date=date(1990, 1, 1),
     )
     response = create_member(payload, caller_role=MemberRole.LEADER, repo=repo)
 
@@ -32,6 +34,7 @@ def test_post_member_as_normal_returns_403_forbidden(memory_db):
         name="Ana Paula Silva",
         phone="11987654321",
         role=MemberRole.NORMAL,
+        birth_date=date(1990, 1, 1),
     )
     with pytest.raises(HTTPException) as exc_info:
         create_member(payload, caller_role=MemberRole.NORMAL, repo=repo)
@@ -44,6 +47,7 @@ def test_post_member_duplicate_phone_returns_409_conflict(memory_db):
         name="Carlos Eduardo",
         phone="11999990001",
         role=MemberRole.LEADER,
+        birth_date=date(1990, 1, 1),
     )
     create_member(payload1, caller_role=MemberRole.LEADER, repo=repo)
 
@@ -51,6 +55,7 @@ def test_post_member_duplicate_phone_returns_409_conflict(memory_db):
         name="Outro Carlos",
         phone="11999990001",
         role=MemberRole.NORMAL,
+        birth_date=date(1992, 2, 2),
     )
     with pytest.raises(HTTPException) as exc_info:
         create_member(payload2, caller_role=MemberRole.CORE, repo=repo)

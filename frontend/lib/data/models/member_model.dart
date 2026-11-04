@@ -10,11 +10,17 @@ class MemberModel extends Member {
     required super.role,
     required super.status,
     required super.initials,
+    super.birthDate,
     required super.createdAt,
     required super.updatedAt,
   });
 
   factory MemberModel.fromJson(Map<String, dynamic> json) {
+    DateTime? parsedBirthDate;
+    if (json['birth_date'] != null && (json['birth_date'] as String).trim().isNotEmpty) {
+      parsedBirthDate = DateTime.parse(json['birth_date'] as String);
+    }
+
     return MemberModel(
       id: json['id'] as String,
       name: json['name'] as String,
@@ -23,6 +29,7 @@ class MemberModel extends Member {
       role: MemberRole.fromString(json['role'] as String? ?? 'normal'),
       status: MemberStatus.fromString(json['status'] as String? ?? 'active'),
       initials: json['initials'] as String? ?? _calculateInitials(json['name'] as String? ?? ''),
+      birthDate: parsedBirthDate,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
@@ -37,6 +44,9 @@ class MemberModel extends Member {
       'role': role.value,
       'status': status.value,
       'initials': initials,
+      'birth_date': birthDate != null
+          ? "${birthDate!.year.toString().padLeft(4, '0')}-${birthDate!.month.toString().padLeft(2, '0')}-${birthDate!.day.toString().padLeft(2, '0')}"
+          : null,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };

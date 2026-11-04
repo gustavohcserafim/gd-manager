@@ -12,6 +12,7 @@ class StubLifecycleRepository implements MemberRepository {
     role: MemberRole.normal,
     status: MemberStatus.active,
     initials: 'OR',
+    birthDate: DateTime(2003, 2, 20),
     createdAt: DateTime.now(),
     updatedAt: DateTime.now(),
   );
@@ -26,6 +27,7 @@ class StubLifecycleRepository implements MemberRepository {
       role: member.role,
       status: MemberStatus.inactive,
       initials: member.initials,
+      birthDate: member.birthDate,
       createdAt: member.createdAt,
       updatedAt: DateTime.now(),
     );
@@ -42,6 +44,7 @@ class StubLifecycleRepository implements MemberRepository {
       role: member.role,
       status: MemberStatus.active,
       initials: member.initials,
+      birthDate: member.birthDate,
       createdAt: member.createdAt,
       updatedAt: DateTime.now(),
     );
@@ -49,25 +52,42 @@ class StubLifecycleRepository implements MemberRepository {
   }
 
   @override
-  Future<Member> createMember({required String name, required String phone, String? email, required MemberRole role}) async => throw UnimplementedError();
+  Future<Member> createMember({required String name, required String phone, String? email, required MemberRole role, required DateTime birthDate}) async => throw UnimplementedError();
   @override
-  Future<List<Member>> getMembers({MemberStatus? status, MemberRole? role, String? search}) async => throw UnimplementedError();
+  Future<List<Member>> getMembers({MemberStatus? status, MemberRole? role, String? search, int? birthdayMonth}) async => throw UnimplementedError();
   @override
   Future<Member> getMemberById(String id) async => throw UnimplementedError();
   @override
-  Future<Member> updateMember({required String id, required String name, required String phone, String? email, required MemberRole role}) async => throw UnimplementedError();
+  Future<Member> updateMember({required String id, required String name, required String phone, String? email, required MemberRole role, required DateTime birthDate}) async => throw UnimplementedError();
 }
 
 void main() {
-  test('DeactivateMember and ReactivateMember use cases toggle status', () async {
+  test('DeactivateMember changes member status to inactive', () async {
     final repo = StubLifecycleRepository();
-    final deactivateUseCase = DeactivateMember(repo);
-    final reactivateUseCase = ReactivateMember(repo);
+    final useCase = DeactivateMember(repo);
 
-    final deactivated = await deactivateUseCase('life-1');
-    expect(deactivated.status, MemberStatus.inactive);
+    final result = await useCase('life-1');
+    expect(result.status, MemberStatus.inactive);
+    expect(result.isActive, isFalse);
+  });
 
-    final reactivated = await reactivateUseCase('life-1');
-    expect(reactivated.status, MemberStatus.active);
+  test('ReactivateMember changes member status to active', () async {
+    final repo = StubLifecycleRepository();
+    repo.member = Member(
+      id: 'life-1',
+      name: 'Olivia Rodrigo',
+      phone: '11988881234',
+      role: MemberRole.normal,
+      status: MemberStatus.inactive,
+      initials: 'OR',
+      birthDate: DateTime(2003, 2, 20),
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+
+    final useCase = ReactivateMember(repo);
+    final result = await useCase('life-1');
+    expect(result.status, MemberStatus.active);
+    expect(result.isActive, isTrue);
   });
 }

@@ -30,6 +30,7 @@ class CreateMemberUseCase:
             phone=dto.phone,
             email=str(dto.email) if dto.email else None,
             role=dto.role,
+            birth_date=dto.birth_date,
         )
 
         # Persistência

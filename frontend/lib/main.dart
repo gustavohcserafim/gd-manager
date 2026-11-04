@@ -5,6 +5,7 @@ import 'data/repositories/member_repository_impl.dart';
 import 'domain/enums/member_enums.dart';
 import 'domain/use_cases/create_member.dart';
 import 'domain/use_cases/get_members.dart';
+import 'domain/use_cases/get_upcoming_birthdays.dart';
 import 'domain/use_cases/update_member.dart';
 import 'domain/use_cases/lifecycle_member.dart';
 import 'presentation/controllers/member_form_controller.dart';
@@ -32,6 +33,7 @@ class _GDManagerAppState extends State<GDManagerApp> {
   late final MemberRemoteDataSource remoteDataSource;
   late final MemberRepositoryImpl repository;
   late final GetMembers getMembersUseCase;
+  late final GetUpcomingBirthdays getUpcomingBirthdaysUseCase;
   late final CreateMember createMemberUseCase;
   late final UpdateMember updateMemberUseCase;
   late final GetMemberById getMemberByIdUseCase;
@@ -48,13 +50,17 @@ class _GDManagerAppState extends State<GDManagerApp> {
     repository = MemberRepositoryImpl(remoteDataSource: remoteDataSource);
 
     getMembersUseCase = GetMembers(repository);
+    getUpcomingBirthdaysUseCase = GetUpcomingBirthdays(repository);
     createMemberUseCase = CreateMember(repository);
     updateMemberUseCase = UpdateMember(repository);
     getMemberByIdUseCase = GetMemberById(repository);
     deactivateMemberUseCase = DeactivateMember(repository);
     reactivateMemberUseCase = ReactivateMember(repository);
 
-    listController = MemberListController(getMembersUseCase: getMembersUseCase);
+    listController = MemberListController(
+      getMembersUseCase: getMembersUseCase,
+      getUpcomingBirthdaysUseCase: getUpcomingBirthdaysUseCase,
+    );
   }
 
   @override
@@ -73,9 +79,7 @@ class _GDManagerAppState extends State<GDManagerApp> {
           onAddMember: () async {
             final formController = MemberFormController(createMemberUseCase: createMemberUseCase);
             await Navigator.of(context).push(
-              MaterialApp.createMaterialHeroController().widget != null
-                  ? MaterialPageRoute(builder: (_) => MemberFormScreen(controller: formController))
-                  : MaterialPageRoute(builder: (_) => MemberFormScreen(controller: formController)),
+              MaterialPageRoute(builder: (_) => MemberFormScreen(controller: formController)),
             );
             listController.loadMembers();
           },

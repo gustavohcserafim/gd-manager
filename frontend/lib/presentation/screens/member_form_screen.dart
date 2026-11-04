@@ -73,6 +73,45 @@ class MemberFormScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
+                InkWell(
+                  onTap: () async {
+                    final now = DateTime.now();
+                    final initial = controller.selectedBirthDate ?? DateTime(2000, 1, 1);
+                    final picked = await showDatePicker(
+                      context: context,
+                      initialDate: initial.isAfter(now) ? now : initial,
+                      firstDate: DateTime(1900, 1, 1),
+                      lastDate: now,
+                      helpText: 'Selecione a data de nascimento',
+                      confirmText: 'CONFIRMAR',
+                      cancelText: 'CANCELAR',
+                    );
+                    if (picked != null) {
+                      controller.setBirthDate(picked);
+                    }
+                  },
+                  child: InputDecorator(
+                    decoration: const InputDecoration(
+                      labelText: 'Data de Nascimento *',
+                      hintText: 'Selecione a data de nascimento',
+                      prefixIcon: Icon(Icons.cake_outlined),
+                      suffixIcon: Icon(Icons.calendar_month_outlined),
+                      border: OutlineInputBorder(),
+                      helperText: 'Obrigatória para cadastro e comemorações.',
+                    ),
+                    child: Text(
+                      controller.formattedBirthDate ?? 'Toque para selecionar',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: controller.selectedBirthDate != null
+                            ? Colors.black87
+                            : Colors.grey.shade600,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
                 TextFormField(
                   controller: controller.emailController,
                   keyboardType: TextInputType.emailAddress,

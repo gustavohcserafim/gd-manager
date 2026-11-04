@@ -1,3 +1,4 @@
+from datetime import date
 import pytest
 from src.domain.entities.member import Member
 from src.domain.enums.member_enums import MemberRole, MemberStatus
@@ -12,6 +13,7 @@ def test_sqlite_create_and_find_member(memory_db):
         phone="11988887777",
         email="carlos@teste.com",
         role=MemberRole.CORE,
+        birth_date=date(1988, 3, 14),
     )
 
     saved = repo.create(member)
@@ -27,9 +29,9 @@ def test_sqlite_create_and_find_member(memory_db):
 
 def test_sqlite_duplicate_active_phone_raises_duplicate_phone_exception(memory_db):
     repo = SqliteMemberRepository(memory_db)
-    m1 = Member.create(name="Membro Um", phone="11911112222")
+    m1 = Member.create(name="Membro Um", phone="11911112222", birth_date=date(1990, 1, 1))
     repo.create(m1)
 
-    m2 = Member.create(name="Membro Dois", phone="11911112222")
+    m2 = Member.create(name="Membro Dois", phone="11911112222", birth_date=date(1991, 2, 2))
     with pytest.raises(DuplicatePhoneException):
         repo.create(m2)

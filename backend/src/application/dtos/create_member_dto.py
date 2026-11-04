@@ -1,3 +1,4 @@
+from datetime import date
 import re
 from typing import Optional
 from pydantic import BaseModel, Field, field_validator
@@ -11,6 +12,7 @@ class CreateMemberRequest(BaseModel):
     phone: str = Field(..., min_length=8, max_length=20, description="Telefone de contato sanitizado")
     email: Optional[str] = Field(default=None, description="E-mail opcional")
     role: MemberRole = Field(default=MemberRole.NORMAL, description="Papel: leader, core, normal")
+    birth_date: date = Field(..., description="Data de nascimento obrigatória no formato YYYY-MM-DD")
 
     @field_validator("email")
     @classmethod
@@ -32,6 +34,11 @@ class MemberResponse(BaseModel):
     email: Optional[str] = None
     role: MemberRole
     status: MemberStatus
+    birth_date: Optional[date] = None
+    age: Optional[int] = None
+    birthday_display: Optional[str] = None
+    is_birthday_today: bool = False
+    days_until_birthday: Optional[int] = None
     initials: str
     created_at: str
     updated_at: str
@@ -45,7 +52,12 @@ class MemberResponse(BaseModel):
             email=member.email,
             role=member.role,
             status=member.status,
+            birth_date=getattr(member, "birth_date", None),
+            age=getattr(member, "age", None),
+            birthday_display=getattr(member, "birthday_display", None),
+            is_birthday_today=getattr(member, "is_birthday_today", False),
+            days_until_birthday=getattr(member, "days_until_birthday", None),
             initials=member.initials,
-            created_at=member.created_at.isoformat(),
-            updated_at=member.updated_at.isoformat(),
+            created_at=member.created_at.isoformat() if hasattr(member.created_at, "isoformat") else str(member.created_at),
+            updated_at=member.updated_at.isoformat() if hasattr(member.updated_at, "isoformat") else str(member.updated_at),
         )

@@ -16,8 +16,9 @@ Conforme estabelecido na [Constituição do GD Manager](.specify/memory/constitu
 
 ---
 
-## 🎯 Funcionalidade: Cadastro e Gestão de Membros (CRUD)
+## 🎯 Funcionalidades Principais
 
+### 1. Gestão de Membros (CRUD & RBAC)
 - **Classificação dos Integrantes**:
   - `Líder`: Responsável pela liderança e condução do grupo (permissão total de leitura e escrita).
   - `Membro do núcleo`: Integrante ativo do núcleo gestor/apoio (permissão total de leitura e escrita).
@@ -25,8 +26,21 @@ Conforme estabelecido na [Constituição do GD Manager](.specify/memory/constitu
 - **Regras de Negócio e Domínio**:
   - **Telefone Único Ativo**: O número de telefone é estritamente único entre membros ativos (garantido por índice parcial e regra de domínio).
   - **Controle de Acesso Hierárquico (RBAC)**: Apenas Líder e Núcleo podem cadastrar, editar, inativar e reativar membros. Membros normais têm acesso restrito à leitura; botões de escrita permanecem ocultos na interface e requisições diretas são bloqueadas no backend com código HTTP 403.
-  - **Avatares Visuais por Iniciais**: Não há upload de imagens na v1 para manter a infraestrutura enxuta e custo zero; avatares coloridos são gerados dinamicamente pelas iniciais do nome.
+  - **Avatares Visuais por Iniciais**: Avatares coloridos gerados dinamicamente pelas iniciais do nome.
   - **Inativação Lógica (Soft Delete)**: Diálogo de confirmação obrigatório em duas etapas para evitar perdas acidentais. Membros inativos podem ser consultados e reativados exclusivamente pela liderança.
+
+### 2. Gestão de Aniversários de Membros (`002-member-birthdays`)
+- **Data de Nascimento Obrigatória**: Ao cadastrar um novo integrante ou editar dados de qualquer membro (inclusive membros legados), a data de nascimento é de preenchimento obrigatório no formato ISO (`YYYY-MM-DD`). Datas futuras ou anteriores a 1900 são validadas e bloqueadas com feedback explicativo.
+- **Cálculo Determinístico de Idade e Exibição Amigável**:
+  - Nos cartões da lista: dia e mês formatados em português com ícone amigável (ex: `🎂 15 de Maio`).
+  - Na tela de detalhes: data completa `DD/MM/AAAA` e idade computada em anos no dia atual (ex: `15/05/1995 (31 anos)`).
+  - Aniversariantes do dia recebem destaque especial com badge visual `🎂 Hoje!`.
+- **Seção Comemorativa de Próximos Aniversariantes**:
+  - Um carrossel/linha horizontal destacada no topo da tela principal exibindo membros ativos que fazem aniversário nos próximos 30 dias (cobrindo perfeitamente a virada de Dezembro para Janeiro e anos bissextos).
+- **Filtro por Mês de Aniversário**:
+  - Barra de chips rápidos com os meses do ano (Janeiro a Dezembro) para planejamento de comemorações mensais.
+- **Compatibilidade Legada**:
+  - Migração de esquema SQLite não-destrutiva e idempotente com rótulo "Data não informada" para registros históricos até que sejam editados.
 
 ---
 
@@ -68,11 +82,11 @@ pip install fastapi uvicorn pydantic pytest httpx
 ```
 
 #### Passo 1.3: Executar a suíte de testes automatizados (TDD)
-O backend possui **38 testes automatizados** cobrindo testes unitários de domínio, testes de repositório SQLite, testes de contrato OpenAPI e a validação ponta a ponta:
+O backend possui **66 testes automatizados** cobrindo testes unitários de domínio, testes de repositório SQLite, testes de contrato OpenAPI e as validações ponta a ponta dos quickstarts:
 ```bash
 python -m pytest tests/ -v -p no:cacheprovider
 ```
-*Saída esperada: `38 passed in ~0.6s`.*
+*Saída esperada: `66 passed in ~0.7s`.*
 
 #### Passo 1.4: Iniciar o servidor da API
 ```bash
@@ -227,11 +241,18 @@ gd-manager/
 
 ## 📜 Artefatos de Especificação e Design
 
-- [Constituição do Projeto](.specify/memory/constitution.md)
+### Feature 001 - Gestão de Membros
 - [Especificação da Feature (spec.md)](specs/001-member-management/spec.md)
 - [Plano de Implementação (plan.md)](specs/001-member-management/plan.md)
-- [Pesquisa Técnica e Decisões (research.md)](specs/001-member-management/research.md)
-- [Modelo de Dados (data-model.md)](specs/001-member-management/data-model.md)
 - [Contrato OpenAPI REST (contracts/members-api.yaml)](specs/001-member-management/contracts/members-api.yaml)
 - [Roteiro de Validação (quickstart.md)](specs/001-member-management/quickstart.md)
 - [Matriz de Tarefas TDD (tasks.md)](specs/001-member-management/tasks.md)
+
+### Feature 002 - Aniversários de Membros
+- [Especificação da Feature (spec.md)](specs/002-member-birthdays/spec.md)
+- [Plano de Implementação (plan.md)](specs/002-member-birthdays/plan.md)
+- [Pesquisa Técnica e Decisões (research.md)](specs/002-member-birthdays/research.md)
+- [Modelo de Dados & Migração (data-model.md)](specs/002-member-birthdays/data-model.md)
+- [Contrato OpenAPI REST (contracts/members-birthdays-api.yaml)](specs/002-member-birthdays/contracts/members-birthdays-api.yaml)
+- [Roteiro de Validação (quickstart.md)](specs/002-member-birthdays/quickstart.md)
+- [Matriz de Tarefas TDD (tasks.md)](specs/002-member-birthdays/tasks.md)

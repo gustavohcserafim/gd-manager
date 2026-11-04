@@ -17,6 +17,7 @@ class GetMembersUseCase:
         status: Optional[MemberStatus] = MemberStatus.ACTIVE,
         role: Optional[MemberRole] = None,
         search: Optional[str] = None,
+        birthday_month: Optional[int] = None,
     ) -> List[MemberResponse]:
         # Visualizar membros inativos exige papel leader ou core
         if status == MemberStatus.INACTIVE and not caller_role.can_manage_members():
@@ -29,5 +30,6 @@ class GetMembersUseCase:
             status=status,
             role=role,
             search=search,
+            birthday_month=birthday_month,
         )
         return [MemberResponse.from_entity(m) for m in members]

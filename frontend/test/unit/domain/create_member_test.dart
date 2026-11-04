@@ -13,6 +13,7 @@ class MockMemberRepository implements MemberRepository {
     required String phone,
     String? email,
     required MemberRole role,
+    required DateTime birthDate,
   }) async {
     final member = Member(
       id: 'test-id',
@@ -22,6 +23,7 @@ class MockMemberRepository implements MemberRepository {
       role: role,
       status: MemberStatus.active,
       initials: 'CP',
+      birthDate: birthDate,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
@@ -30,13 +32,13 @@ class MockMemberRepository implements MemberRepository {
   }
 
   @override
-  Future<List<Member>> getMembers({MemberStatus? status, MemberRole? role, String? search}) async => members;
+  Future<List<Member>> getMembers({MemberStatus? status, MemberRole? role, String? search, int? birthdayMonth}) async => members;
 
   @override
   Future<Member> getMemberById(String id) async => members.first;
 
   @override
-  Future<Member> updateMember({required String id, required String name, required String phone, String? email, required MemberRole role}) async => members.first;
+  Future<Member> updateMember({required String id, required String name, required String phone, String? email, required MemberRole role, required DateTime birthDate}) async => members.first;
 
   @override
   Future<Member> deactivateMember(String id) async => members.first;
@@ -54,11 +56,13 @@ void main() {
       name: 'Carlos Pereira',
       phone: '11999990001',
       role: MemberRole.leader,
+      birthDate: DateTime(1990, 5, 15),
     );
 
     assert(result.name == 'Carlos Pereira');
     assert(result.phone == '11999990001');
     assert(result.role == MemberRole.leader);
     assert(result.status == MemberStatus.active);
+    assert(result.birthDate == DateTime(1990, 5, 15));
   });
 }

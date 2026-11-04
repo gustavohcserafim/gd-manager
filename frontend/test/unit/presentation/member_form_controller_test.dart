@@ -12,6 +12,7 @@ class FakeMemberRepository implements MemberRepository {
     required String phone,
     String? email,
     required MemberRole role,
+    required DateTime birthDate,
   }) async {
     if (phone == '11999990001') {
       throw Exception('duplicate');
@@ -24,17 +25,18 @@ class FakeMemberRepository implements MemberRepository {
       role: role,
       status: MemberStatus.active,
       initials: 'AS',
+      birthDate: birthDate,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
   }
 
   @override
-  Future<List<Member>> getMembers({MemberStatus? status, MemberRole? role, String? search}) async => [];
+  Future<List<Member>> getMembers({MemberStatus? status, MemberRole? role, String? search, int? birthdayMonth}) async => [];
   @override
   Future<Member> getMemberById(String id) async => throw UnimplementedError();
   @override
-  Future<Member> updateMember({required String id, required String name, required String phone, String? email, required MemberRole role}) async => throw UnimplementedError();
+  Future<Member> updateMember({required String id, required String name, required String phone, String? email, required MemberRole role, required DateTime birthDate}) async => throw UnimplementedError();
   @override
   Future<Member> deactivateMember(String id) async => throw UnimplementedError();
   @override
@@ -50,6 +52,7 @@ void main() {
     controller.nameController.text = 'Ana Silva';
     controller.phoneController.text = '11988887777';
     controller.selectedRole = MemberRole.leader;
+    controller.selectedBirthDate = DateTime(1995, 5, 15);
 
     final success = await controller.submit();
     expect(success, isTrue);

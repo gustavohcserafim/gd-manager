@@ -50,6 +50,7 @@ class UpdateMemberUseCase:
             phone=dto.phone,
             email=str(dto.email) if dto.email else None,
             role=dto.role,
+            birth_date=dto.birth_date,
         )
 
         saved = self.member_repository.update(member)

@@ -14,6 +14,7 @@ class StubMemberRepository implements MemberRepository {
     required String phone,
     String? email,
     required MemberRole role,
+    required DateTime birthDate,
   }) async {
     return Member(
       id: 'stub-id',
@@ -23,17 +24,18 @@ class StubMemberRepository implements MemberRepository {
       role: role,
       status: MemberStatus.active,
       initials: 'MS',
+      birthDate: birthDate,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
   }
 
   @override
-  Future<List<Member>> getMembers({MemberStatus? status, MemberRole? role, String? search}) async => [];
+  Future<List<Member>> getMembers({MemberStatus? status, MemberRole? role, String? search, int? birthdayMonth}) async => [];
   @override
   Future<Member> getMemberById(String id) async => throw UnimplementedError();
   @override
-  Future<Member> updateMember({required String id, required String name, required String phone, String? email, required MemberRole role}) async => throw UnimplementedError();
+  Future<Member> updateMember({required String id, required String name, required String phone, String? email, required MemberRole role, required DateTime birthDate}) async => throw UnimplementedError();
   @override
   Future<Member> deactivateMember(String id) async => throw UnimplementedError();
   @override
@@ -54,6 +56,7 @@ void main() {
 
     expect(find.text('Cadastro de Membro'), findsOneWidget);
     expect(find.byType(TextFormField), findsNWidgets(3)); // Nome, Telefone, Email
+    expect(find.textContaining('Data de Nascimento'), findsWidgets);
     expect(find.text('Salvar Membro'), findsOneWidget);
   });
 }

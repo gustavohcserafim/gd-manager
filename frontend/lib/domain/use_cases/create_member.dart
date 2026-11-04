@@ -12,12 +12,14 @@ class CreateMember {
     required String phone,
     String? email,
     required MemberRole role,
+    required DateTime birthDate,
   }) {
     return repository.createMember(
       name: name,
       phone: phone,
       email: email,
       role: role,
+      birthDate: birthDate,
     );
   }
 }

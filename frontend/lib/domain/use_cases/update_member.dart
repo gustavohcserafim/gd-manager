@@ -13,6 +13,7 @@ class UpdateMember {
     required String phone,
     String? email,
     required MemberRole role,
+    required DateTime birthDate,
   }) {
     return repository.updateMember(
       id: id,
@@ -20,6 +21,7 @@ class UpdateMember {
       phone: phone,
       email: email,
       role: role,
+      birthDate: birthDate,
     );
   }
 }

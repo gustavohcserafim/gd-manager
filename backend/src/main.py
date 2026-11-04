@@ -1,3 +1,4 @@
+import os
 from typing import Optional
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -7,7 +8,7 @@ from src.infrastructure.database.sqlite_member_repository import SqliteMemberRep
 from src.infrastructure.web.routers.members_router import router as members_router, get_repository
 
 
-def create_app(repo: Optional[SqliteMemberRepository] = None, db_path: str = ":memory:") -> FastAPI:
+def create_app(repo: Optional[SqliteMemberRepository] = None, db_path: Optional[str] = None) -> FastAPI:
     app = FastAPI(
         title="GD Manager API",
         version="1.0.0",
@@ -23,7 +24,8 @@ def create_app(repo: Optional[SqliteMemberRepository] = None, db_path: str = ":m
     )
 
     if repo is None:
-        conn = get_connection(db_path=db_path)
+        target_db = db_path if db_path is not None else os.getenv("DATABASE_PATH", "gd_manager.db")
+        conn = get_connection(db_path=target_db)
         init_db(conn=conn)
         repo = SqliteMemberRepository(conn)
 

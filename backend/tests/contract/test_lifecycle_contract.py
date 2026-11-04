@@ -1,3 +1,4 @@
+from datetime import date
 import pytest
 from fastapi import HTTPException
 from src.domain.entities.member import Member
@@ -8,7 +9,7 @@ from src.infrastructure.web.routers.members_router import deactivate_member, rea
 
 def test_deactivate_contract_200_and_403(memory_db):
     repo = SqliteMemberRepository(memory_db)
-    m = Member.create(name="Nelson Piquet", phone="11933332222")
+    m = Member.create(name="Nelson Piquet", phone="11933332222", birth_date=date(1980, 8, 17))
     repo.create(m)
 
     # 403 para Normal
@@ -23,7 +24,7 @@ def test_deactivate_contract_200_and_403(memory_db):
 
 def test_reactivate_contract_200_and_409(memory_db):
     repo = SqliteMemberRepository(memory_db)
-    m1 = Member.create(name="Nelson Piquet", phone="11933332222")
+    m1 = Member.create(name="Nelson Piquet", phone="11933332222", birth_date=date(1980, 8, 17))
     m1.deactivate()
     repo.create(m1)
 
@@ -36,7 +37,7 @@ def test_reactivate_contract_200_and_409(memory_db):
     repo.update(m1)
 
     # Cadastra outro com mesmo telefone
-    m2 = Member.create(name="Outro Nelson", phone="11933332222")
+    m2 = Member.create(name="Outro Nelson", phone="11933332222", birth_date=date(1985, 1, 1))
     repo.create(m2)
 
     # 409 ao tentar reativar m1 com colisão de telefone

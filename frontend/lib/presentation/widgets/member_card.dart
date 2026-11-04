@@ -32,28 +32,67 @@ class MemberCard extends StatelessWidget {
         ),
         subtitle: Padding(
           padding: const EdgeInsets.only(top: 4.0),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.phone_outlined, size: 14, color: Colors.grey.shade600),
-              const SizedBox(width: 4),
-              Text(
-                member.phone,
-                style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
+              Row(
+                children: [
+                  Icon(Icons.phone_outlined, size: 14, color: Colors.grey.shade600),
+                  const SizedBox(width: 4),
+                  Text(
+                    member.phone,
+                    style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
+                  ),
+                  if (!member.isActive) ...[
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade50,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        'Inativo',
+                        style: TextStyle(color: Colors.red.shade800, fontSize: 10, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ],
               ),
-              if (!member.isActive) ...[
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: Colors.red.shade50,
-                    borderRadius: BorderRadius.circular(6),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  if (member.isBirthdayToday) ...[
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.shade100,
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: Colors.amber.shade400),
+                      ),
+                      child: Text(
+                        '🎂 Hoje!',
+                        style: TextStyle(
+                          color: Colors.amber.shade900,
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                  ],
+                  Text(
+                    member.birthdayDisplay != null
+                        ? '🎂 ${member.birthdayDisplay}'
+                        : '🎂 Data não informada',
+                    style: TextStyle(
+                      color: member.isBirthdayToday ? Colors.amber.shade900 : Colors.blueGrey.shade700,
+                      fontSize: 12,
+                      fontWeight: member.isBirthdayToday ? FontWeight.bold : FontWeight.normal,
+                    ),
                   ),
-                  child: Text(
-                    'Inativo',
-                    style: TextStyle(color: Colors.red.shade800, fontSize: 10, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ],
           ),
         ),

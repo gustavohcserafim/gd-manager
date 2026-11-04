@@ -1,3 +1,4 @@
+from datetime import date
 import re
 from typing import Optional
 from pydantic import BaseModel, Field, field_validator
@@ -11,6 +12,7 @@ class UpdateMemberRequest(BaseModel):
     phone: str = Field(..., min_length=8, max_length=20, description="Telefone de contato")
     email: Optional[str] = Field(default=None, description="E-mail opcional")
     role: MemberRole = Field(..., description="Papel: leader, core, normal")
+    birth_date: date = Field(..., description="Data de nascimento obrigatória no formato YYYY-MM-DD")
 
     @field_validator("email")
     @classmethod

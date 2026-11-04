@@ -11,11 +11,13 @@ class GetMembers {
     MemberStatus? status,
     MemberRole? role,
     String? search,
+    int? birthdayMonth,
   }) {
     return repository.getMembers(
       status: status,
       role: role,
       search: search,
+      birthdayMonth: birthdayMonth,
     );
   }
 }
