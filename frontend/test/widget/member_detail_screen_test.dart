@@ -27,13 +27,14 @@ void main() {
         home: MemberDetailScreen(
           member: member,
           sessionController: sessionController,
+          onEdit: () {},
         ),
       ),
     );
 
     expect(find.text('Karina Ramos'), findsOneWidget);
     expect(find.text('11966667777'), findsOneWidget);
-    expect(find.text('Editar'), findsOneWidget);
+    expect(find.text('Editar Dados'), findsOneWidget);
   });
 
   testWidgets('MemberDetailScreen hides edit button for normal member', (WidgetTester tester) async {
@@ -44,11 +45,12 @@ void main() {
         home: MemberDetailScreen(
           member: member,
           sessionController: sessionController,
+          onEdit: () {},
         ),
       ),
     );
 
     expect(find.text('Karina Ramos'), findsOneWidget);
-    expect(find.text('Editar'), findsNothing);
+    expect(find.text('Editar Dados'), findsNothing);
   });
 }

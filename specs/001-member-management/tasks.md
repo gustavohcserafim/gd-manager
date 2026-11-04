@@ -271,3 +271,13 @@ Task: "T033 [P] [US1] Implementar componente de avatar visual dinâmico em front
 3. Adicionar US3 → Membros existentes podem ser consultados em detalhes e editados.
 4. Adicionar US4 → Membros podem ser inativados e reativados com segurança.
 5. Polimento e validação cruzada (Phase 7).
+
+
+---
+
+## Phase 8: Convergence
+
+- [X] T083 [CRITICAL] Corrigir resolução de importações dos testes unitários em backend/tests/conftest.py ou backend/pyproject.toml para viabilizar execução limpa do pytest a partir do diretório backend/ per Constitution II (contradicts)
+- [X] T084 Adicionar mensagens de feedback visual (SnackBar) e tratamento de erros (try/catch) nas operações de inativação e reativação em frontend/lib/main.dart per FR-010 / US4/AC2 / US4/AC5 (partial)
+- [X] T085 Condicionar o retorno da tela de detalhes de membro ao resultado da edição evitando fechamento indevido no cancelamento em frontend/lib/main.dart per US3/AC1 / US3/AC2 (partial)
+- [X] T086 Ajustar asserção do botão de edição em frontend/test/widget/member_detail_screen_test.dart para coincidir com o rótulo 'Editar Dados' renderizado per Constitution II / T054 (partial)

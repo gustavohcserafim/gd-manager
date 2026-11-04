@@ -1,10 +1,12 @@
 import sys
 from pathlib import Path
 
-# Adiciona o diretório backend ao sys.path para importações diretas de 'src'
+# Adiciona o diretório backend e o root do projeto ao sys.path para importações de 'src' e 'backend'
 backend_dir = Path(__file__).resolve().parent.parent
-if str(backend_dir) not in sys.path:
-    sys.path.insert(0, str(backend_dir))
+project_root = backend_dir.parent
+for path in (str(backend_dir), str(project_root)):
+    if path not in sys.path:
+        sys.path.insert(0, path)
 
 import pytest
 import sqlite3
