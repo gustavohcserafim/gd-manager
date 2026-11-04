@@ -76,6 +76,7 @@ void main() {
 
       expect(member.birthDate, DateTime(1995, 5, 15));
       expect(member.birthdayDisplay, '15 de Maio');
+      expect(member.birthDateFormatted, '15/05/1995');
       expect(member.age, isNotNull);
       expect(member.age, greaterThanOrEqualTo(25));
     });
@@ -95,6 +96,7 @@ void main() {
 
       expect(member.birthDate, isNull);
       expect(member.birthdayDisplay, isNull);
+      expect(member.birthDateFormatted, isNull);
       expect(member.age, isNull);
       expect(member.isBirthdayToday, isFalse);
       expect(member.daysUntilBirthday, isNull);

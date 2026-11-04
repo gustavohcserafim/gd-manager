@@ -68,4 +68,23 @@ void main() {
     // Deve exibir mensagem de erro exigindo data de nascimento
     expect(find.textContaining('nascimento'), findsWidgets);
   });
+
+  testWidgets('MemberFormScreen formats typed date with DD/MM/AAAA mask', (WidgetTester tester) async {
+    final repo = StubMemberRepository();
+    final createUseCase = CreateMember(repo);
+    final controller = MemberFormController(createMemberUseCase: createUseCase);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MemberFormScreen(controller: controller),
+      ),
+    );
+
+    await tester.enterText(find.byType(TextFormField).at(0), 'Juliana Lima');
+    await tester.enterText(find.byType(TextFormField).at(1), '11988887777');
+    await tester.enterText(find.byType(TextFormField).at(2), '15051995');
+    await tester.pump();
+
+    expect(controller.birthDateController.text, '15/05/1995');
+  });
 }

@@ -143,6 +143,12 @@ class Member:
         return f"{self.birth_date.day} de {MONTHS_PT[self.birth_date.month]}"
 
     @property
+    def birth_date_formatted(self) -> Optional[str]:
+        if self.birth_date is None:
+            return None
+        return f"{self.birth_date.day:02d}/{self.birth_date.month:02d}/{self.birth_date.year:04d}"
+
+    @property
     def is_birthday_today(self) -> bool:
         if self.birth_date is None:
             return False

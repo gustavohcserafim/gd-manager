@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../domain/enums/member_enums.dart';
 import '../controllers/member_form_controller.dart';
+import '../formatters/date_input_formatter.dart';
 
 class MemberFormScreen extends StatelessWidget {
   final MemberFormController controller;
@@ -73,41 +74,37 @@ class MemberFormScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
-                InkWell(
-                  onTap: () async {
-                    final now = DateTime.now();
-                    final initial = controller.selectedBirthDate ?? DateTime(2000, 1, 1);
-                    final picked = await showDatePicker(
-                      context: context,
-                      initialDate: initial.isAfter(now) ? now : initial,
-                      firstDate: DateTime(1900, 1, 1),
-                      lastDate: now,
-                      helpText: 'Selecione a data de nascimento',
-                      confirmText: 'CONFIRMAR',
-                      cancelText: 'CANCELAR',
-                    );
-                    if (picked != null) {
-                      controller.setBirthDate(picked);
-                    }
-                  },
-                  child: InputDecorator(
-                    decoration: const InputDecoration(
-                      labelText: 'Data de Nascimento *',
-                      hintText: 'Selecione a data de nascimento',
-                      prefixIcon: Icon(Icons.cake_outlined),
-                      suffixIcon: Icon(Icons.calendar_month_outlined),
-                      border: OutlineInputBorder(),
-                      helperText: 'Obrigatória para cadastro e comemorações.',
+                TextFormField(
+                  controller: controller.birthDateController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [DateInputFormatter()],
+                  onChanged: (val) => controller.parseAndSetBirthDate(val),
+                  decoration: InputDecoration(
+                    labelText: 'Data de Nascimento *',
+                    hintText: 'DD/MM/AAAA',
+                    prefixIcon: const Icon(Icons.cake_outlined),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.calendar_month_outlined),
+                      tooltip: 'Selecionar no calendário',
+                      onPressed: () async {
+                        final now = DateTime.now();
+                        final initial = controller.selectedBirthDate ?? DateTime(2000, 1, 1);
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: initial.isAfter(now) ? now : initial,
+                          firstDate: DateTime(1900, 1, 1),
+                          lastDate: now,
+                          helpText: 'Selecione a data de nascimento',
+                          confirmText: 'CONFIRMAR',
+                          cancelText: 'CANCELAR',
+                        );
+                        if (picked != null) {
+                          controller.setBirthDate(picked);
+                        }
+                      },
                     ),
-                    child: Text(
-                      controller.formattedBirthDate ?? 'Toque para selecionar',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: controller.selectedBirthDate != null
-                            ? Colors.black87
-                            : Colors.grey.shade600,
-                      ),
-                    ),
+                    border: const OutlineInputBorder(),
+                    helperText: 'Formato DD/MM/AAAA. Obrigatória para cadastro e comemorações.',
                   ),
                 ),
                 const SizedBox(height: 16),

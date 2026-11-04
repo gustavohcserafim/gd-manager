@@ -1,79 +1,86 @@
 # Research & Technical Decisions: Gestão de Aniversários de Membros
 
-**Feature**: `002-member-birthdays` | **Date**: 2026-11-04
+**Feature**: `002-member-birthdays` | **Date**: 2026-11-04 (Atualizado com formato `DD/MM/AAAA`)
 
 ## Overview
 
-Este documento consolida as pesquisas técnicas, decisões de arquitetura e justificativas de engenharia para a implementação da gestão de aniversários no GD Manager, respeitando os princípios da [Constituição do GD Manager](../../.specify/memory/constitution.md) (Clean Architecture, TDD, Mobile-First, Custo Zero e Parcimônia de Dependências).
+Este documento consolida as pesquisas técnicas, decisões de arquitetura e justificativas de engenharia para a implementação da gestão de aniversários no GD Manager, com ênfase na padronização de preenchimento e exibição no formato `DD/MM/AAAA` (`dd/mm/YYYY`), respeitando os princípios da [Constituição do GD Manager](../../.specify/memory/constitution.md) (Clean Architecture, TDD, Mobile-First, Custo Zero e Parcimônia de Dependências).
 
 ---
 
 ## Technical Decisions
 
-### 1. Formato de Armazenamento e Manipulação de Datas
+### 1. Formato de Preenchimento, Exibição e Armazenamento
 
-- **Decision**: Armazenamento em SQLite como `TEXT` no padrão ISO 8601 estrito (`YYYY-MM-DD`). Manipulação via `datetime.date` no backend (Python) e `DateTime` no frontend (Dart).
+- **Decision**: 
+  - **Interface do Usuário (Preenchimento e Exibição)**: Estritamente no padrão brasileiro `DD/MM/AAAA` (`dd/mm/YYYY`).
+  - **Trânsito na API (DTOs Pydantic)**: Suporte dual resiliente — aceita tanto `DD/MM/AAAA` quanto ISO `YYYY-MM-DD`, convertendo para `datetime.date`.
+  - **Persistência no SQLite**: `TEXT` no padrão ISO 8601 estrito (`YYYY-MM-DD`).
 - **Rationale**:
-  - Datas de nascimento são datas de calendário puras (não possuem fuso horário nem hora/minuto). O uso de `YYYY-MM-DD` evita anomalias de fuso horário (ex: membro nascido à meia-noite virar o dia anterior por conversão UTC).
-  - O SQLite possui funções nativas de data (`strftime('%m', birth_date)`, `strftime('%d', birth_date)`) extremamente eficientes para queries de filtragem por mês e dia.
+  - Para o usuário brasileiro, `DD/MM/AAAA` é intuitivo e elimina ambiguidades entre mês e dia.
+  - Para o banco de dados relacional (SQLite), `YYYY-MM-DD` preserva a ordenabilidade cronológica natural e compatibilidade com funções embutidas de data (`strftime('%m', birth_date)`).
+  - O desacoplamento através de adaptadores e validadores Pydantic segue rigorosamente o Princípio I da Clean Architecture (camadas externas adaptam dados para o domínio).
 - **Alternatives Considered**:
-  - *Unix Timestamp (inteiro em milissegundos)*: Rejeitado porque introduz distorções com fusos horários e horário de verão para datas de nascimento, além de dificultar consultas SQL por mês.
-  - *Três colunas separadas (`birth_day`, `birth_month`, `birth_year`)*: Rejeitado por duplicar espaço e dificultar validações completas de calendário (ex: validar 29 de fevereiro apenas em anos bissextos).
+  - *Armazenar `DD/MM/AAAA` diretamente no SQLite*: Rejeitado porque quebraria a capacidade do SQLite de ordenar cronologicamente por `birth_date` (ex: `01/12/2000` viria antes de `15/01/1990` em ordenação alfabética).
+  - *Forçar o usuário a digitar `AAAA-MM-DD`*: Rejeitado por atrito na experiência móvel brasileira e violação do Princípio III (Mobile-First).
 
-### 2. Algoritmo de Cálculo de Idade e Próximos Aniversariantes
+### 2. Máscara de Entrada de Data no Flutter sem Dependências Externas
+
+- **Decision**: Criação de um `DateInputFormatter` estendendo a classe nativa do Flutter `TextInputFormatter`:
+  - Intercepta a digitação e insere automaticamente os caracteres de barra `/` após o dia (2 dígitos) e após o mês (2 dígitos).
+  - Limita o comprimento máximo a 10 caracteres (`DD/MM/AAAA`).
+  - Permite tanto a digitação direta assistida quanto o preenchimento automático pelo calendário `showDatePicker`.
+- **Rationale**:
+  - Respeita o Princípio V da Constituição (Parcimônia Extrema de Dependências): não adiciona bibliotecas pesadas de formatação como `mask_text_input_formatter`.
+  - Proporciona usabilidade ágil e intuitiva no celular (Mobile-First).
+- **Alternatives Considered**:
+  - *Instalar pacote `mask_text_input_formatter`*: Rejeitado para honrar o Princípio V e evitar dependências desnecessárias.
+  - *Apenas seleção por DatePicker sem digitação manual*: Rejeitado porque usuários experientes muitas vezes preferem digitar rapidamente 8 dígitos numéricos em vez de navegar anos em um calendário.
+
+### 3. Validação Resiliente nos DTOs do Backend (Pydantic v2)
+
+- **Decision**: Inclusão de `@field_validator('birth_date', mode='before')` nos DTOs `CreateMemberDTO` e `UpdateMemberDTO`:
+  ```python
+  @field_validator("birth_date", mode="before")
+  @classmethod
+  def parse_birth_date(cls, v: Any) -> Any:
+      if isinstance(v, str):
+          v = v.strip()
+          # Tenta primeiro formato brasileiro DD/MM/AAAA
+          if "/" in v:
+              try:
+                  return datetime.strptime(v, "%d/%m/%Y").date()
+              except ValueError:
+                  raise ValueError("Data de nascimento inválida. Use o formato DD/MM/AAAA.")
+          # Suporta formato ISO YYYY-MM-DD
+          try:
+              return datetime.strptime(v, "%Y-%m-%d").date()
+          except ValueError:
+              raise ValueError("Data de nascimento inválida. Use o formato DD/MM/AAAA.")
+      return v
+  ```
+- **Rationale**:
+  - Permite que requisições HTTP enviem payloads naturais com `"15/05/1990"` ou `"1990-05-15"`.
+  - Respostas com HTTP 400 claras e educativas quando o formato estiver inconsistente.
+- **Alternatives Considered**:
+  - *Aceitar apenas ISO e exigir que o frontend converta*: Aceitável, mas oferecer suporte flexível no backend protege a API contra quebras se clientes externos enviarem `DD/MM/AAAA`.
+
+### 4. Algoritmo de Cálculo de Idade e Próximos Aniversariantes
 
 - **Decision**:
-  - **Idade**: Calculada de forma determinística comparando `(hoje.month, hoje.day) < (nascimento.month, nascimento.day)`:
+  - **Idade**: Calculada comparando tuplas `(hoje.month, hoje.day) < (nascimento.month, nascimento.day)`:
     $$\text{idade} = \text{hoje.year} - \text{nascimento.year} - (1 \text{ se aniversário ainda não ocorreu este ano senão } 0)$$
   - **Próximos Aniversariantes (próximos 30 dias)**:
-    - Para cada membro ativo com data de nascimento, projeta-se o aniversário no ano atual.
-    - Se a data já passou neste ano, projeta-se para o próximo ano (cobrindo perfeitamente a virada de Dezembro para Janeiro).
-    - Membros cuja diferença de dias entre a data projetada e hoje for $\ge 0$ e $\le 30$ são selecionados e ordenados em ordem cronológica crescente.
+    - Projeta o aniversário no ano atual; se já passou, projeta no próximo ano.
+    - Se a diferença de dias $\ge 0$ e $\le 30$, inclui na lista em ordem cronológica crescente.
   - **Anos Bissextos (29 de Fevereiro)**:
-    - Em anos não bissextos, a data projetada é ajustada para 28 de Fevereiro.
-- **Rationale**: Abordagem pura, testável em isolamento sem bibliotecas externas, garantindo precisão matemática e respeito às regras de negócio.
-- **Alternatives Considered**:
-  - *Filtro simples apenas por mês civil*: Não resolve o requisito de destacar os aniversariantes dos próximos 30 dias quando estamos no fim do mês (ex: dia 25 de novembro quer ver quem faz aniversário até 25 de dezembro).
+    - Em anos não bissextos, ajusta a data projetada para 28 de Fevereiro.
+- **Rationale**: Solução pura e determinística em Python e Dart.
 
-### 3. Migração Não-Destrutiva do Banco de Dados SQLite
-
-- **Decision**: Evolução de esquema idempotente em `backend/src/infrastructure/database/connection.py`:
-  - Execução de verificação via `PRAGMA table_info(members)`.
-  - Caso a coluna `birth_date` não exista, executar:
-    ```sql
-    ALTER TABLE members ADD COLUMN birth_date TEXT;
-    CREATE INDEX IF NOT EXISTS idx_members_birth_date ON members(birth_date);
-    ```
-- **Rationale**: Garante compatibilidade total e preservação de dados existentes no banco `gd_manager.db` já em uso, sem interromper operações de desenvolvimento ou produção.
-- **Alternatives Considered**:
-  - *Deletar o banco e recriar*: Inviável para ambientes com dados reais ou persistentes.
-  - *Ferramenta externa de migração (ex: Alembic)*: Viola o Princípio V da Constituição (Parcimônia de Dependências) para um banco embarcado monousuário/leve SQLite.
-
-### 4. Componente de Seleção de Data no Mobile (Flutter)
-
-- **Decision**: Utilização do `showDatePicker` nativo do Flutter Material 3 com máscara/validação local.
-  - `firstDate`: `DateTime(1900, 1, 1)`
-  - `lastDate`: `DateTime.now()`
-  - Formatação visual no padrão brasileiro `DD/MM/AAAA`.
-- **Rationale**:
-  - 100% nativo do SDK Flutter (zero dependências extras no `pubspec.yaml`, atendendo ao Princípio V).
-  - Experiência otimizada por toque para telas móveis (iOS e Android), responsivo e com suporte a acessibilidade.
-- **Alternatives Considered**:
-  - *Pacotes de terceiros (ex: `flutter_datetime_picker` ou `mask_text_input_formatter`)*: Rejeitados por violarem o Princípio V da Constituição, uma vez que o SDK padrão resolve com perfeição.
-
-### 5. Destaque Visual e Experiência do Usuário
+### 5. Destaque Visual e Telas no Mobile (Flutter)
 
 - **Decision**:
-  - Na tela principal de listagem ([`MemberListScreen`](../../frontend/lib/presentation/screens/member_list_screen.dart)):
-    - Um carrossel/linha horizontal expansível no topo com cards compactos dos aniversariantes dos próximos 30 dias.
-    - Seção comemorativa quando o membro faz aniversário no dia atual (`🎂 Hoje!`).
-    - Filtro de mês integrado na barra de filtros.
-  - Nos cards da lista: selo discreto com dia e mês (ex: `🎂 15 de Maio`).
-  - Na tela de detalhes ([`MemberDetailScreen`](../../frontend/lib/presentation/screens/member_detail_screen.dart)): linha dedicada com ícone de bolo/calendário, data completa `DD/MM/AAAA` e a idade calculada `(XX anos)`.
-- **Rationale**: Atende rigorosamente às decisões validadas com o usuário (Q1: C, Q2: B) mantendo a interface leve e elegante.
-
-### 6. Precedência de Rotas no FastAPI Router
-
-- **Decision**: Registrar a rota estática `/birthdays/upcoming` estritamente antes das rotas dinâmicas parametrizadas (`/{id}`) no router do backend.
-- **Rationale**: No FastAPI/Starlette, o roteamento avalia as regras sequencialmente. Declarar `/{id}` antes de `/birthdays/upcoming` causaria captura indevida de `"birthdays"` como parâmetro `id`, disparando erro 404 (MemberNotFoundException).
-- **Alternatives Considered**: Criar um router separado para `birthdays` (desnecessário e violaria a simplicidade da estrutura).
+  - **Formulário** ([`MemberFormScreen`](../../frontend/lib/presentation/screens/member_form_screen.dart)): Campo de texto com máscara `DD/MM/AAAA`, ícone de calendário com toque abrindo o `showDatePicker`, populando o campo formatado em `DD/MM/AAAA`.
+  - **Detalhes** ([`MemberDetailScreen`](../../frontend/lib/presentation/screens/member_detail_screen.dart)): Exibe a data de nascimento estritamente como `DD/MM/AAAA (XX anos)`.
+  - **Listagem** ([`MemberListScreen`](../../frontend/lib/presentation/screens/member_list_screen.dart)): Carrossel superior de aniversariantes dos próximos 30 dias e filtro mensal.
+- **Rationale**: Alinhamento estrito aos requisitos funcionais e de usabilidade móvel.

@@ -31,4 +31,5 @@
 
 ## Notes
 
-- Todas as validações foram aprovadas com sucesso após a incorporação das decisões de clarificação (Sessão 2026-11-04). Especificação pronta para a fase de planejamento (`/speckit-plan`).
+- Especificação atualizada para padronizar o preenchimento e exibição da data de nascimento no formato `DD/MM/AAAA` (`dd/mm/YYYY`).
+- Todas as validações foram aprovadas com sucesso. A especificação está pronta para planejamento (`/speckit-plan`).

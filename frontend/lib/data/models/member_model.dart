@@ -18,7 +18,20 @@ class MemberModel extends Member {
   factory MemberModel.fromJson(Map<String, dynamic> json) {
     DateTime? parsedBirthDate;
     if (json['birth_date'] != null && (json['birth_date'] as String).trim().isNotEmpty) {
-      parsedBirthDate = DateTime.parse(json['birth_date'] as String);
+      final raw = (json['birth_date'] as String).trim();
+      if (raw.contains('/')) {
+        final parts = raw.split('/');
+        if (parts.length == 3) {
+          final day = int.tryParse(parts[0]);
+          final month = int.tryParse(parts[1]);
+          final year = int.tryParse(parts[2]);
+          if (day != null && month != null && year != null) {
+            parsedBirthDate = DateTime(year, month, day);
+          }
+        }
+      } else {
+        parsedBirthDate = DateTime.tryParse(raw);
+      }
     }
 
     return MemberModel(

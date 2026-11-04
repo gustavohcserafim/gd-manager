@@ -20,17 +20,18 @@ def test_quickstart_birthdays_all_5_scenarios(memory_db):
     repo = SqliteMemberRepository(memory_db)
 
     # =========================================================================
-    # Cenário 1: Cadastro de Membro com Data de Nascimento Válida (P1)
+    # Cenário 1: Cadastro de Membro com Data de Nascimento Válida em DD/MM/AAAA (P1)
     # =========================================================================
     lucas_payload = CreateMemberRequest(
         name="Lucas Nogueira",
         phone="11988881234",
         role=MemberRole.NORMAL,
-        birth_date=date(1995, 5, 15),
+        birth_date="15/05/1995",  # type: ignore[arg-type]
     )
     lucas = create_member(lucas_payload, caller_role=MemberRole.LEADER, repo=repo)
     assert lucas.name == "Lucas Nogueira"
     assert lucas.birth_date == date(1995, 5, 15)
+    assert lucas.birth_date_formatted == "15/05/1995"
     assert lucas.birthday_display == "15 de Maio"
     assert lucas.age is not None
     assert lucas.age >= 30
@@ -137,16 +138,17 @@ def test_quickstart_birthdays_all_5_scenarios(memory_db):
             role=MemberRole.NORMAL,  # type: ignore (sem birth_date)
         )
 
-    # Atualiza com data de nascimento válida
+    # Atualiza com data de nascimento válida no formato DD/MM/AAAA
     update_dto = UpdateMemberRequest(
         name="Membro Legado Atualizado",
         phone="11977770000",
         role=MemberRole.CORE,
-        birth_date=date(1989, 7, 22),
+        birth_date="22/07/1989",  # type: ignore[arg-type]
     )
     updated = update_member(id="legacy-id-01", payload=update_dto, caller_role=MemberRole.LEADER, repo=repo)
     assert updated.name == "Membro Legado Atualizado"
     assert updated.birth_date == date(1989, 7, 22)
+    assert updated.birth_date_formatted == "22/07/1989"
     assert updated.birthday_display == "22 de Julho"
     assert updated.age is not None
     assert updated.age >= 35

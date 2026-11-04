@@ -69,12 +69,44 @@ void main() {
       controller.phoneController.text = '11988887777';
       controller.selectedRole = MemberRole.leader;
       final bdate = DateTime(1995, 5, 15);
-      controller.selectedBirthDate = bdate;
+      controller.setBirthDate(bdate);
 
       final success = await controller.submit();
       expect(success, isTrue);
       expect(controller.errorMessage, isNull);
+      expect(controller.formattedBirthDate, '15/05/1995');
+      expect(controller.birthDateController.text, '15/05/1995');
       expect(repo.lastCreatedBirthDate, bdate);
+    });
+
+    test('MemberFormController parses typed DD/MM/AAAA format', () async {
+      final repo = FakeMemberRepository();
+      final createUseCase = CreateMember(repo);
+      final controller = MemberFormController(createMemberUseCase: createUseCase);
+
+      controller.nameController.text = 'Ana Silva';
+      controller.phoneController.text = '11988887777';
+      controller.selectedRole = MemberRole.leader;
+      controller.birthDateController.text = '20/10/1988';
+
+      final success = await controller.submit();
+      expect(success, isTrue);
+      expect(controller.selectedBirthDate, equals(DateTime(1988, 10, 20)));
+      expect(repo.lastCreatedBirthDate, equals(DateTime(1988, 10, 20)));
+    });
+
+    test('MemberFormController rejects invalid typed date', () async {
+      final repo = FakeMemberRepository();
+      final createUseCase = CreateMember(repo);
+      final controller = MemberFormController(createMemberUseCase: createUseCase);
+
+      controller.nameController.text = 'Ana Silva';
+      controller.phoneController.text = '11988887777';
+      controller.birthDateController.text = '32/01/1990';
+
+      final success = await controller.submit();
+      expect(success, isFalse);
+      expect(controller.errorMessage, contains('DD/MM/AAAA'));
     });
   });
 }

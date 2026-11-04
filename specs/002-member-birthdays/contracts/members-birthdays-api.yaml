@@ -182,9 +182,8 @@ components:
           default: normal
         birth_date:
           type: string
-          format: date
-          example: "1992-05-15"
-          description: Data de nascimento obrigatória (formato YYYY-MM-DD). Não pode ser data futura.
+          example: "15/05/1992"
+          description: Data de nascimento obrigatória. Aceita o padrão brasileiro DD/MM/AAAA ou ISO YYYY-MM-DD. Não pode ser data futura.
 
     UpdateMemberRequest:
       type: object
@@ -212,9 +211,8 @@ components:
           enum: [leader, core, normal]
         birth_date:
           type: string
-          format: date
-          example: "1992-05-15"
-          description: Data de nascimento obrigatória (formato YYYY-MM-DD).
+          example: "15/05/1992"
+          description: Data de nascimento obrigatória. Aceita o padrão brasileiro DD/MM/AAAA ou ISO YYYY-MM-DD.
 
     MemberResponse:
       type: object
@@ -249,6 +247,11 @@ components:
           format: date
           nullable: true
           example: "1992-05-15"
+        birth_date_formatted:
+          type: string
+          nullable: true
+          example: "15/05/1992"
+          description: Data de nascimento formatada no padrão brasileiro DD/MM/AAAA.
         age:
           type: integer
           nullable: true

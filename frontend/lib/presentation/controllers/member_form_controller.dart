@@ -12,6 +12,7 @@ class MemberFormController extends ChangeNotifier {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController birthDateController = TextEditingController();
   MemberRole selectedRole = MemberRole.normal;
   DateTime? selectedBirthDate;
 
@@ -30,6 +31,7 @@ class MemberFormController extends ChangeNotifier {
       emailController.text = editingMember!.email ?? '';
       selectedRole = editingMember!.role;
       selectedBirthDate = editingMember!.birthDate;
+      birthDateController.text = formattedBirthDate ?? '';
     }
   }
 
@@ -53,7 +55,44 @@ class MemberFormController extends ChangeNotifier {
 
   void setBirthDate(DateTime date) {
     selectedBirthDate = date;
+    birthDateController.text = formattedBirthDate ?? '';
+    _errorMessage = null;
     notifyListeners();
+  }
+
+  bool parseAndSetBirthDate(String text) {
+    final clean = text.trim();
+    if (clean.isEmpty) {
+      selectedBirthDate = null;
+      notifyListeners();
+      return true;
+    }
+    final parts = clean.split('/');
+    if (parts.length != 3) {
+      selectedBirthDate = null;
+      return false;
+    }
+    final day = int.tryParse(parts[0]);
+    final month = int.tryParse(parts[1]);
+    final year = int.tryParse(parts[2]);
+    if (day == null || month == null || year == null || parts[2].length != 4) {
+      selectedBirthDate = null;
+      return false;
+    }
+    try {
+      final parsed = DateTime(year, month, day);
+      if (parsed.year != year || parsed.month != month || parsed.day != day) {
+        selectedBirthDate = null;
+        return false;
+      }
+      selectedBirthDate = parsed;
+      _errorMessage = null;
+      notifyListeners();
+      return true;
+    } catch (_) {
+      selectedBirthDate = null;
+      return false;
+    }
   }
 
   Future<bool> submit() async {
@@ -73,8 +112,16 @@ class MemberFormController extends ChangeNotifier {
       return false;
     }
 
-    if (selectedBirthDate == null) {
-      _errorMessage = 'Data de nascimento é obrigatória.';
+    if (selectedBirthDate == null && birthDateController.text.trim().isNotEmpty) {
+      parseAndSetBirthDate(birthDateController.text.trim());
+    }
+
+    if (birthDateController.text.trim().isEmpty || selectedBirthDate == null) {
+      if (birthDateController.text.trim().isNotEmpty) {
+        _errorMessage = 'Data de nascimento inválida. Use o formato DD/MM/AAAA.';
+      } else {
+        _errorMessage = 'Data de nascimento é obrigatória.';
+      }
       notifyListeners();
       return false;
     }
@@ -132,6 +179,7 @@ class MemberFormController extends ChangeNotifier {
     nameController.dispose();
     phoneController.dispose();
     emailController.dispose();
+    birthDateController.dispose();
     super.dispose();
   }
 }

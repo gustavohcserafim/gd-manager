@@ -1,6 +1,6 @@
-from datetime import date
+from datetime import date, datetime
 import re
-from typing import Optional
+from typing import Any, Optional
 from pydantic import BaseModel, Field, field_validator
 from src.domain.enums.member_enums import MemberRole, MemberStatus
 
@@ -12,7 +12,7 @@ class CreateMemberRequest(BaseModel):
     phone: str = Field(..., min_length=8, max_length=20, description="Telefone de contato sanitizado")
     email: Optional[str] = Field(default=None, description="E-mail opcional")
     role: MemberRole = Field(default=MemberRole.NORMAL, description="Papel: leader, core, normal")
-    birth_date: date = Field(..., description="Data de nascimento obrigatória no formato YYYY-MM-DD")
+    birth_date: date = Field(..., description="Data de nascimento obrigatória. Aceita 'DD/MM/AAAA' ou 'YYYY-MM-DD'.")
 
     @field_validator("email")
     @classmethod
@@ -26,6 +26,24 @@ class CreateMemberRequest(BaseModel):
             return clean
         return None
 
+    @field_validator("birth_date", mode="before")
+    @classmethod
+    def parse_birth_date(cls, v: Any) -> Any:
+        if isinstance(v, str):
+            clean = v.strip()
+            if not clean:
+                raise ValueError("Data de nascimento é obrigatória.")
+            if "/" in clean:
+                try:
+                    return datetime.strptime(clean, "%d/%m/%Y").date()
+                except ValueError:
+                    raise ValueError("Data de nascimento inválida. Use o formato DD/MM/AAAA.")
+            try:
+                return datetime.strptime(clean, "%Y-%m-%d").date()
+            except ValueError:
+                raise ValueError("Data de nascimento inválida. Use o formato DD/MM/AAAA.")
+        return v
+
 
 class MemberResponse(BaseModel):
     id: str
@@ -35,6 +53,7 @@ class MemberResponse(BaseModel):
     role: MemberRole
     status: MemberStatus
     birth_date: Optional[date] = None
+    birth_date_formatted: Optional[str] = None
     age: Optional[int] = None
     birthday_display: Optional[str] = None
     is_birthday_today: bool = False
@@ -53,6 +72,7 @@ class MemberResponse(BaseModel):
             role=member.role,
             status=member.status,
             birth_date=getattr(member, "birth_date", None),
+            birth_date_formatted=getattr(member, "birth_date_formatted", None),
             age=getattr(member, "age", None),
             birthday_display=getattr(member, "birthday_display", None),
             is_birthday_today=getattr(member, "is_birthday_today", False),

@@ -48,6 +48,14 @@ class Member {
     return '${birthDate!.day} de $monthName';
   }
 
+  String? get birthDateFormatted {
+    if (birthDate == null) return null;
+    final day = birthDate!.day.toString().padLeft(2, '0');
+    final month = birthDate!.month.toString().padLeft(2, '0');
+    final year = birthDate!.year.toString().padLeft(4, '0');
+    return '$day/$month/$year';
+  }
+
   bool get isBirthdayToday {
     if (birthDate == null) return false;
     final now = DateTime.now();

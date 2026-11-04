@@ -99,6 +99,7 @@ def test_reconstitute_legacy_member_with_none_birth_date():
         birth_date=None,
     )
     assert member.birth_date is None
+    assert member.birth_date_formatted is None
     assert member.age is None
     assert member.birthday_display is None
     assert member.is_birthday_today is False
@@ -114,6 +115,7 @@ def test_member_birthday_display_and_age_calculation():
         birth_date=date(1995, 5, 15),
     )
     assert member.birthday_display == "15 de Maio"
+    assert member.birth_date_formatted == "15/05/1995"
     today = date.today()
     expected_age = today.year - 1995 - ((today.month, today.day) < (5, 15))
     assert member.age == expected_age

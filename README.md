@@ -30,10 +30,10 @@ Conforme estabelecido na [Constituição do GD Manager](.specify/memory/constitu
   - **Inativação Lógica (Soft Delete)**: Diálogo de confirmação obrigatório em duas etapas para evitar perdas acidentais. Membros inativos podem ser consultados e reativados exclusivamente pela liderança.
 
 ### 2. Gestão de Aniversários de Membros (`002-member-birthdays`)
-- **Data de Nascimento Obrigatória**: Ao cadastrar um novo integrante ou editar dados de qualquer membro (inclusive membros legados), a data de nascimento é de preenchimento obrigatório no formato ISO (`YYYY-MM-DD`). Datas futuras ou anteriores a 1900 são validadas e bloqueadas com feedback explicativo.
+- **Data de Nascimento Obrigatória no Formato DD/MM/AAAA**: Ao cadastrar um novo integrante ou editar dados de qualquer membro (inclusive membros legados), a data de nascimento é de preenchimento e exibição obrigatória no formato brasileiro `DD/MM/AAAA` (`dd/mm/YYYY`). No mobile, o campo conta com máscara automática (`DateInputFormatter` nativo sem bibliotecas externas) e integração ao `showDatePicker`. O backend aceita tanto `DD/MM/AAAA` quanto ISO `YYYY-MM-DD` com conversão resiliente. Datas futuras ou anteriores a 1900 são validadas e bloqueadas com feedback explicativo.
 - **Cálculo Determinístico de Idade e Exibição Amigável**:
   - Nos cartões da lista: dia e mês formatados em português com ícone amigável (ex: `🎂 15 de Maio`).
-  - Na tela de detalhes: data completa `DD/MM/AAAA` e idade computada em anos no dia atual (ex: `15/05/1995 (31 anos)`).
+  - Na tela de detalhes: data completa estritamente como `DD/MM/AAAA` e idade computada em anos no dia atual (ex: `15/05/1995 (31 anos)`).
   - Aniversariantes do dia recebem destaque especial com badge visual `🎂 Hoje!`.
 - **Seção Comemorativa de Próximos Aniversariantes**:
   - Um carrossel/linha horizontal destacada no topo da tela principal exibindo membros ativos que fazem aniversário nos próximos 30 dias (cobrindo perfeitamente a virada de Dezembro para Janeiro e anos bissextos).
@@ -82,11 +82,11 @@ pip install fastapi uvicorn pydantic pytest httpx
 ```
 
 #### Passo 1.3: Executar a suíte de testes automatizados (TDD)
-O backend possui **66 testes automatizados** cobrindo testes unitários de domínio, testes de repositório SQLite, testes de contrato OpenAPI e as validações ponta a ponta dos quickstarts:
+O backend possui **72 testes automatizados** cobrindo testes unitários de domínio, testes de DTOs e formatos de data, testes de repositório SQLite, testes de contrato OpenAPI e as validações ponta a ponta dos quickstarts:
 ```bash
 python -m pytest tests/ -v -p no:cacheprovider
 ```
-*Saída esperada: `66 passed in ~0.7s`.*
+*Saída esperada: `72 passed in ~0.7s`.*
 
 #### Passo 1.4: Iniciar o servidor da API
 ```bash
