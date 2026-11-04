@@ -1,0 +1,378 @@
+openapi: 3.1.0
+info:
+  title: GD Manager - Members API
+  version: 1.0.0
+  description: API REST para cadastro e gestão de membros do GD Manager, em conformidade com Clean Architecture e controle de acesso hierárquico.
+servers:
+  - url: http://localhost:8000/api/v1
+    description: Servidor de desenvolvimento local
+
+paths:
+  /members:
+    get:
+      summary: Listar membros cadastrados
+      description: Retorna a lista de membros de acordo com os filtros de status, tipo e termo de busca.
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [active, inactive]
+            default: active
+          description: Filtrar membros por status (membros inativos exigem papel leader ou core).
+        - name: role
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [leader, core, normal]
+          description: Filtrar membros por tipo/papel específico.
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Busca textual parcial no nome do membro.
+        - name: X-User-Role
+          in: header
+          required: false
+          schema:
+            type: string
+            enum: [leader, core, normal]
+            default: normal
+          description: Papel ativo do usuário solicitante para controle de acesso.
+      responses:
+        '200':
+          description: Lista de membros retornada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MemberResponse'
+        '403':
+          description: Acesso negado (exemplo: membro normal tentando visualizar lista de inativos).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      summary: Cadastrar novo membro
+      description: Cadastra um novo membro no grupo. Exige papel de Líder ou Membro do núcleo.
+      parameters:
+        - name: X-User-Role
+          in: header
+          required: true
+          schema:
+            type: string
+            enum: [leader, core, normal]
+          description: Papel ativo do usuário solicitante.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMemberRequest'
+      responses:
+        '201':
+          description: Membro cadastrado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberResponse'
+        '400':
+          description: Dados inválidos (nome curto, formato inválido).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Operação não autorizada para o papel do usuário.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Conflito de duplicidade (número de telefone já em uso por outro membro ativo).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /members/{id}:
+    get:
+      summary: Consultar detalhes de um membro
+      description: Retorna as informações completas de um integrante pelo seu identificador.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: X-User-Role
+          in: header
+          required: false
+          schema:
+            type: string
+            enum: [leader, core, normal]
+            default: normal
+      responses:
+        '200':
+          description: Detalhes do membro retornados.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberResponse'
+        '404':
+          description: Membro não encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      summary: Atualizar dados de um membro
+      description: Atualiza os dados cadastrais e categoria de um membro ativo. Exige papel leader ou core.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: X-User-Role
+          in: header
+          required: true
+          schema:
+            type: string
+            enum: [leader, core, normal]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMemberRequest'
+      responses:
+        '200':
+          description: Membro atualizado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberResponse'
+        '400':
+          description: Dados de entrada inválidos.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Permissão insuficiente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Membro não encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Telefone informado já está em uso por outro membro ativo.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Inativar membro (Soft Delete)
+      description: Altera a situação do membro para inativo. Exige papel leader ou core.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: X-User-Role
+          in: header
+          required: true
+          schema:
+            type: string
+            enum: [leader, core, normal]
+      responses:
+        '200':
+          description: Membro inativado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberResponse'
+        '403':
+          description: Permissão insuficiente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Membro não encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /members/{id}/reactivate:
+    patch:
+      summary: Reativar membro inativo
+      description: Restaura o status de um membro inativo para ativo. Exige papel leader ou core.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: X-User-Role
+          in: header
+          required: true
+          schema:
+            type: string
+            enum: [leader, core, normal]
+      responses:
+        '200':
+          description: Membro reativado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberResponse'
+        '403':
+          description: Permissão insuficiente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Membro inativo não encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: O telefone deste membro passou a ser utilizado por outro membro ativo durante a inatividade.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    CreateMemberRequest:
+      type: object
+      required:
+        - name
+        - phone
+        - role
+      properties:
+        name:
+          type: string
+          minLength: 3
+          maxLength: 150
+          example: "Ana Paula Silva"
+        phone:
+          type: string
+          example: "11987654321"
+        email:
+          type: string
+          format: email
+          nullable: true
+          example: "ana.silva@exemplo.com"
+        role:
+          type: string
+          enum: [leader, core, normal]
+          default: normal
+          example: "leader"
+
+    UpdateMemberRequest:
+      type: object
+      required:
+        - name
+        - phone
+        - role
+      properties:
+        name:
+          type: string
+          minLength: 3
+          maxLength: 150
+          example: "Ana Paula Silva"
+        phone:
+          type: string
+          example: "11987654321"
+        email:
+          type: string
+          format: email
+          nullable: true
+          example: "ana.silva@exemplo.com"
+        role:
+          type: string
+          enum: [leader, core, normal]
+          example: "core"
+
+    MemberResponse:
+      type: object
+      required:
+        - id
+        - name
+        - phone
+        - role
+        - status
+        - initials
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+        name:
+          type: string
+          example: "Ana Paula Silva"
+        phone:
+          type: string
+          example: "11987654321"
+        email:
+          type: string
+          nullable: true
+          example: "ana.silva@exemplo.com"
+        role:
+          type: string
+          enum: [leader, core, normal]
+          example: "leader"
+        status:
+          type: string
+          enum: [active, inactive]
+          example: "active"
+        initials:
+          type: string
+          example: "AS"
+        created_at:
+          type: string
+          format: date-time
+          example: "2026-11-03T21:00:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2026-11-03T21:00:00Z"
+
+    ErrorResponse:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: string
+          example: "Este número de telefone já está cadastrado para outro membro ativo."
+        code:
+          type: string
+          example: "DUPLICATE_PHONE"
