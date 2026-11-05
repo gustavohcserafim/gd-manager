@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="gdGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#000000" flood-opacity="0.4" />
+    </filter>
+  </defs>
+
+  <!-- Background container with rounded corners for standalone PWA -->
+  <rect width="512" height="512" rx="112" fill="#0f172a"/>
+  
+  <!-- Outer accent ring -->
+  <circle cx="256" cy="256" r="190" fill="none" stroke="#334155" stroke-width="6" stroke-dasharray="16 12" />
+
+  <!-- Cell / Disciple Community Emblem -->
+  <g filter="url(#shadow)">
+    <!-- Central Leader Circle -->
+    <circle cx="256" cy="180" r="48" fill="url(#gdGrad)"/>
+    <path d="M196 320 C196 260 316 260 316 320 Z" fill="url(#gdGrad)" />
+
+    <!-- Left Member (Disciple) -->
+    <circle cx="160" cy="230" r="32" fill="#94a3b8"/>
+    <path d="M120 330 C120 285 200 285 200 330 Z" fill="#94a3b8" opacity="0.85"/>
+
+    <!-- Right Member (Disciple) -->
+    <circle cx="352" cy="230" r="32" fill="#94a3b8"/>
+    <path d="M312 330 C312 285 392 285 392 330 Z" fill="#94a3b8" opacity="0.85"/>
+
+    <!-- Dynamic Wave / Onda Symbol -->
+    <path d="M136 380 Q 196 350, 256 380 T 376 380" fill="none" stroke="#f59e0b" stroke-width="12" stroke-linecap="round"/>
+  </g>
+</svg>
