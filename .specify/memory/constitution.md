@@ -1,66 +1,71 @@
 <!--
-Sync Impact Report:
-- Version change: Unratified (template) → 1.0.0
-- List of modified principles:
-  - [PRINCIPLE_1_NAME] → I. Clean Architecture e Separação Estrita de Responsabilidades
-  - [PRINCIPLE_2_NAME] → II. Test-Driven Development (TDD) Mandatório e Inegociável
-  - [PRINCIPLE_3_NAME] → III. Mobile-First e Multiplataforma (Flutter iOS e Android)
-  - [PRINCIPLE_4_NAME] → IV. Eficiência Máxima de Custos de Infraestrutura e Hospedagem
-  - [PRINCIPLE_5_NAME] → V. Parcimônia Extrema e Justificativa de Dependências Externas
-- Added sections:
-  - Diretrizes Tecnológicas e Restrições de Engenharia
-  - Fluxo de Desenvolvimento e Quality Gates
-- Removed sections: Nenhuma (scaffold inicial preenchido integralmente).
-- Follow-up TODOs: Nenhum.
+SYNC IMPACT REPORT
+- Version change: 1.0.0 -> 2.0.0
+- Modified principles: None
+- Added sections: None
+- Removed sections / principles:
+  - Removed Principle: V. Data Privacy & Community Trust (eliminated RBAC and sensitive data constraints per revised project scope)
+  - Updated Platform Constraints: Simplified backend & storage expectations to eliminate RBAC / row-level security requirements
+- Follow-up TODOs: None
 -->
 
 # GD Manager Constitution
 
 ## Core Principles
 
-### I. Clean Architecture e Separação Estrita de Responsabilidades
-Tanto a base de código frontend (Flutter) quanto o backend (Python 3) DEVEM estruturar-se sob os princípios formais da Clean Architecture. As regras de negócio e entidades de domínio DEVEM ser mantidas puras, isoladas de frameworks, bibliotecas visuais de UI, detalhes de persistência e chamadas de rede. O fluxo de dependências DEVE apontar exclusivamente para dentro (em direção ao domínio e casos de uso). Camadas externas (Data, Infrastructure, UI) comunicam-se com o Core somente por meio de abstrações, interfaces ou portas (Ports and Adapters).
-*Rationale*: Garante independência tecnológica, estabilidade de regras de negócio, alta testabilidade em isolamento e facilidade de refatoração ou evolução sem acoplamentos nocivos.
+### I. Test-Driven Development (NON-NEGOTIABLE)
+Test-Driven Development (TDD) is mandatory across all domain logic, services, data operations, and critical UI interactions. Developers MUST strictly follow the Red-Green-Refactor cycle:
+- **Red**: Tests MUST be written before writing implementation code and MUST fail initially.
+- **Green**: Write only the minimal production code necessary to make the tests pass.
+- **Refactor**: Clean up and optimize the implementation while keeping all tests passing.
+No feature, bug fix, or refactor may be merged without automated tests validating its behavior. Test suites MUST execute quickly, deterministically, and without dependency on unmocked external networks.
+*Rationale*: TDD guarantees software correctness, prevents regressions, guides clean decoupled design, and provides living documentation of domain requirements.
 
-### II. Test-Driven Development (TDD) Mandatório e Inegociável
-Nenhuma funcionalidade, comportamento ou regra de negócio DEVE ser codificada sem que o teste automatizado correspondente tenha sido previamente escrito e executado com falha comprovada (ciclo Red-Green-Refactor). O desenvolvimento DEVE seguir rigorosamente a sequência: 1. Escrever o teste unitário/de especificação; 2. Confirmar a falha do teste; 3. Implementar a lógica mínima necessária para o teste passar; 4. Refatorar o código preservando os testes verdes. Casos de borda e validações de regras de negócio DEVEM ter cobertura completa demonstrável antes de qualquer mesclagem de código.
-*Rationale*: O TDD assegura que os requisitos sejam claramente compreendidos antes da escrita do código de produção, previne regressões precocemente e orienta o design para componentes pequenos, coesos e desacoplados.
+### II. Progressive Web App (PWA) & Multiplatform First
+The GD Manager application MUST be built as a responsive Progressive Web App (PWA) delivering a first-class user experience across Android, iOS, and PC (Desktop web).
+- The solution MUST maintain a single, responsive codebase; native wrappers or separate platform codebases are PROHIBITED without explicit constitutional amendment.
+- The PWA MUST meet standard installability criteria (valid Web App Manifest, Service Worker caching, and HTTPS enforcement).
+- The application MUST support offline-resilient access and local data synchronization for critical cell group workflows (e.g., viewing member lists, recording attendance offline).
+*Rationale*: A PWA enables frictionless adoption by church leaders and members without App Store / Play Store fees, submission delays, or multiple platform maintenance overhead.
 
-### III. Mobile-First e Multiplataforma (Flutter iOS e Android)
-O produto GD Manager DEVE ser concebido, desenhado e implementado com mentalidade Mobile-First, assegurando paridade de funcionalidade e experiência fluida e nativa tanto em iOS quanto em Android utilizando Flutter. As interfaces de usuário DEVEM priorizar usabilidade por toque, responsividade a múltiplos formatos e densidades de tela, desempenho constante de renderização (60/120 fps) e tratamento resiliente para cenários de conectividade instável ou offline.
-*Rationale*: O acesso principal dos usuários se dá via dispositivos móveis; manter paridade rigorosa entre iOS e Android a partir de uma única base de código Flutter reduz tempo de entrega e evita fragmentação de produto.
+### III. Lean Infrastructure & Cost Minimization
+All architectural and operational choices MUST prioritize minimal financial and maintenance cost.
+- Hosting and compute MUST prioritize free-tier, serverless, or static-first services (e.g., Cloudflare Pages/Workers, Supabase/Firebase free tier, GitHub Pages, or lightweight managed BaaS) targeting $0/month in ongoing infrastructure expenses under standard community usage.
+- High-cost, continuously running dedicated compute (e.g., enterprise Kubernetes, oversized cloud VMs, paid proprietary enterprise databases) is strictly PROHIBITED.
+- Operational maintenance MUST require minimal human intervention: self-healing architectures, automated CI/CD deployments, and zero server maintenance for church volunteers.
+*Rationale*: The GD Manager serves the Onda Mooca church community where financial resources and technical volunteer time are limited; long-term sustainability demands zero-to-low overhead.
 
-### IV. Eficiência Máxima de Custos de Infraestrutura e Hospedagem
-O backend e a infraestrutura de suporte DEVEM ser desenhados e executados visando o menor custo financeiro possível de hospedagem e operação. DEVE-SE priorizar arquiteturas leves, computação sob demanda (serverless), modelos de baixo consumo de recursos e planos de hospedagem gratuitos ou de custo mínimo viável. Decisões que envolvam instâncias sobrecarregadas, serviços proprietários caros ou infraestrutura complexa são expressamente PROIBIDAS sem justificativa formal de inviabilidade técnica de alternativas mais econômicas.
-*Rationale*: Assegurar a sustentabilidade financeira do projeto, evitando desperdício de recursos computacionais e garantindo que o custo operacional escale proporcionalmente ao valor entregue.
+### IV. Architectural Simplicity & Maintainability
+Simplicity, clarity, and readability MUST take precedence over speculative abstractions and premature optimization (adhering strictly to YAGNI and KISS principles).
+- Business logic and domain entities MUST remain decoupled from UI frameworks, persistence providers, and external libraries to enable painless refactoring or framework migration.
+- External dependencies MUST be vetted, kept to a minimum, modern, and actively maintained. Avoid heavy monolithic frameworks when lightweight solutions suffice.
+*Rationale*: Church volunteer developers of varying skill levels may contribute to this codebase over time; low cognitive load and clear code organization ensure anyone can quickly understand and maintain the project.
 
-### V. Parcimônia Extrema e Justificativa de Dependências Externas
-A inclusão de qualquer nova dependência externa (seja via pubspec.yaml no ecossistema Dart/Flutter, seja via requirements/pyproject no ecossistema Python) DEVE ser minimizada ao estritamente essencial. Toda e qualquer nova dependência EXIGE justificativa técnica formal documentada, demonstrando por que o problema não pode ou não deve ser resolvido utilizando recursos nativos da linguagem ou da biblioteca padrão. Pacotes que tragam peso desnecessário, histórico de abandono ou vulnerabilidades de segurança não serão aceitos.
-*Rationale*: Reduz dramaticamente a superfície de ataque, riscos de quebra de compatibilidade em atualizações, tempos de build, tamanho do executável e a dívida técnica decorrente de dependências órfãs.
+## Platform Constraints & Infrastructure Architecture
 
-## Diretrizes Tecnológicas e Restrições de Engenharia
+- **Client Platforms**: Modern browsers across mobile (Android Chrome/Firefox, iOS Safari/WebKit PWA) and desktop (Windows, macOS, Linux browsers).
+- **Offline & Connectivity**: Service Worker implementation MUST cache application assets and implement an offline-first or optimistic update strategy for core GD interactions (attendance, meeting dates).
+- **Backend & Storage**: Serverless, lightweight BaaS, or client-side storage (e.g., IndexedDB / local persistence with lightweight cloud sync) providing simple data persistence within free-tier limits without unnecessary RBAC or complex authorization layers.
+- **Resource Constraints**: Client bundle sizes MUST remain lean and performance-budgeted to ensure swift initial load times even over constrained mobile 3G/4G connections.
 
-- **Frontend**: Flutter (Dart) com Clean Architecture, controle rigoroso de estado sem overhead de bibliotecas desnecessárias e total conformidade com diretrizes visuais e operacionais de iOS e Android.
-- **Backend**: Python 3 moderno, com uso obrigatório de tipagem estática (type hints), validações estruturadas e separação estrita de camadas (Domain, Application/UseCases, Infrastructure/Adapters).
-- **Comunicação e Protocolos**: APIs RESTful/JSON concisas e eficientes, com payloads mínimos para economizar largura de banda e processamento em dispositivos móveis.
-- **Segurança e Conformidade**: Práticas de segurança defensiva por padrão (armazenamento seguro no dispositivo móvel, proteção de variáveis de ambiente no backend e sanitização estrita de entradas) sem dependência de ferramentas terceiras onerosas.
+## Quality Gates & Verification Workflow
 
-## Fluxo de Desenvolvimento e Quality Gates
+- **TDD Workflow**: Every code contribution begins with failing automated tests specifying the intended behavior.
+- **Test Hierarchy**:
+  - Unit Tests: Enforce domain rules, entity state transitions, date manipulations, and business calculations.
+  - Integration Tests: Validate database interactions, repository contracts, API routes, and Service Worker caching behavior.
+  - End-to-End Tests: Validate critical user journeys (attendance taking, group reporting, PWA installation) across mobile and desktop viewport profiles.
+- **Automated CI**: Every pull request MUST pass automated linting, type-checking, and test suites prior to merge approval.
+- **Constitutional Compliance Review**: All pull requests MUST explicitly verify adherence to TDD, PWA compatibility, and cost constraints before deployment.
 
-- **Gate de TDD**: Pull Requests DEVEM comprovar que os testes unitários acompanham ou antecedem o código da funcionalidade e que nenhum código de produção sem cobertura de teste correspondente foi introduzido.
-- **Gate de Dependências**: Qualquer alteração em manifestos de pacotes (`pubspec.yaml`, `requirements.txt`, etc.) DEVE conter no commit/PR a justificativa técnica detalhada e avaliação de alternativas nativas.
-- **Gate de Arquitetura**: Todo código produzido DEVE respeitar os limites de camadas da Clean Architecture. Violações de acesso direto de UI ou Controller para infraestrutura/banco de dados sem passar por casos de uso ou abstrações serão rejeitadas.
-- **Pipeline de Integração Contínua**: Execução de linters e suítes de testes automatizados com sucesso absoluto em cada alteração antes do merge.
+## Governance
 
-## Governança
+- **Supremacy**: This constitution defines the non-negotiable architectural boundaries and engineering principles of GD Manager. It supersedes informal conventions and code-level preferences.
+- **Amendment Procedure**: Any principle or constraint amendment MUST be submitted as a pull request updating `.specify/memory/constitution.md` with documented rationale, maintenance impact, and migration plan.
+- **Versioning Policy**: Semantic versioning (SemVer) applies to this constitution:
+  - MAJOR: Removal, weakening, or breaking redefinition of core principles (e.g., removing principles or weakening TDD/PWA mandates).
+  - MINOR: Addition of new principles, architecture sections, or expanded governance rules.
+  - PATCH: Clarifications, phrasing improvements, typo corrections, non-semantic refinements.
+- **Compliance Enforcement**: Features or pull requests that violate these constitutional mandates (e.g., code committed without tests, introducing paid infrastructure, breaking PWA capabilities) MUST NOT be merged.
 
-Esta Constituição define os padrões arquiteturais, técnicos e de qualidade fundamentais do GD Manager e tem precedência sobre quaisquer práticas ou convenções informais.
-
-- **Conformidade Obrigatória**: Todas as especificações, planos de implementação, tarefas e pull requests DEVEM ser verificados quanto à conformidade com os princípios desta Constituição.
-- **Processo de Emenda**: Alterações, acréscimos ou remoções de princípios exigem proposta documentada, justificativa técnica, avaliação de impacto arquitetural e aprovação formal.
-- **Política de Versionamento Semântico**:
-  - **MAJOR**: Alterações ou remoções incompatíveis de princípios ou regras de governança.
-  - **MINOR**: Adição de novos princípios, seções ou diretrizes complementares substantivas.
-  - **PATCH**: Refinamentos redacionais, correções tipográficas e esclarecimentos pontuais sem alteração semântica.
-
-**Version**: 1.0.0 | **Ratified**: 2026-11-03 | **Last Amended**: 2026-11-03
+**Version**: 2.0.0 | **Ratified**: 2026-11-05 | **Last Amended**: 2026-11-05

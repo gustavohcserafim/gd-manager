@@ -1,7 +1,7 @@
 {
   "integration": "speckit",
   "version": "1.2.4",
-  "installed_at": "2026-11-04T00:17:31.282137+00:00",
+  "installed_at": "2026-11-05T13:01:03.731460+00:00",
   "files": {
     ".specify/scripts/python/check_prerequisites.py": "367e0e7cf8d384167aa60d2a99ba8d40ef9ca1e49b8a35f3ec44c9c759416600",
     ".specify/scripts/python/common.py": "3715c954539619dcfbe1d4ea825b12c74c658763722544625939bc65391904a7",
