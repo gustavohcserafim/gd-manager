@@ -21,7 +21,7 @@ export function initAuth({ onLoginSuccess, onLogout }) {
     pinDisplay.innerHTML = "";
     for (let i = 0; i < 4; i++) {
       const dot = document.createElement("div");
-      dot.className = `w-4 h-4 rounded-full border-2 border-slate-400 ${i < currentPin.length ? "bg-amber-500 border-amber-500 scale-110" : "bg-transparent"} transition-all duration-150`;
+      dot.className = `w-4 h-4 rounded-full border-2 border-white/30 ${i < currentPin.length ? "bg-onda-blue-500 border-white shadow-glass-glow scale-110" : "bg-transparent"} transition-all duration-150`;
       pinDisplay.appendChild(dot);
     }
   }

@@ -1,35 +1,47 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
-    <linearGradient id="gdGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f59e0b" />
-      <stop offset="100%" stop-color="#d97706" />
+    <!-- Dark Wave Background Gradient -->
+    <linearGradient id="ondaWaveGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#181e5f" />
+      <stop offset="50%" stop-color="#11187e" />
+      <stop offset="100%" stop-color="#1f2bc8" />
     </linearGradient>
-    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#000000" flood-opacity="0.4" />
+
+    <!-- Electric Blue Accent Gradient -->
+    <linearGradient id="ondaElectricGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2537de" />
+      <stop offset="100%" stop-color="#1f2bc8" />
+    </linearGradient>
+
+    <!-- Glassmorphic Drop Shadow -->
+    <filter id="glassShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="20" flood-color="#000000" flood-opacity="0.45" />
     </filter>
   </defs>
 
-  <!-- Background container with rounded corners for standalone PWA -->
-  <rect width="512" height="512" rx="112" fill="#0f172a"/>
-  
-  <!-- Outer accent ring -->
-  <circle cx="256" cy="256" r="190" fill="none" stroke="#334155" stroke-width="6" stroke-dasharray="16 12" />
+  <!-- PWA Container with Rounded Squircle Shape -->
+  <rect width="512" height="512" rx="112" fill="url(#ondaWaveGrad)" />
 
-  <!-- Cell / Disciple Community Emblem -->
-  <g filter="url(#shadow)">
+  <!-- Concentric Impact Wave Rings (Brandbook 2027) -->
+  <circle cx="256" cy="256" r="210" fill="none" stroke="#2537de" stroke-width="2.5" opacity="0.3" />
+  <circle cx="256" cy="256" r="170" fill="none" stroke="#9cc7e4" stroke-width="3" stroke-dasharray="14 10" opacity="0.45" />
+  <circle cx="256" cy="256" r="130" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.25" />
+
+  <!-- Disciple Group (GD) Core Community Emblem with Glassmorphic Style -->
+  <g filter="url(#glassShadow)">
     <!-- Central Leader Circle -->
-    <circle cx="256" cy="180" r="48" fill="url(#gdGrad)"/>
-    <path d="M196 320 C196 260 316 260 316 320 Z" fill="url(#gdGrad)" />
+    <circle cx="256" cy="180" r="48" fill="url(#ondaElectricGrad)" stroke="rgba(255,255,255,0.4)" stroke-width="3" />
+    <path d="M196 320 C196 256 316 256 316 320 Z" fill="url(#ondaElectricGrad)" stroke="rgba(255,255,255,0.3)" stroke-width="2.5" />
 
     <!-- Left Member (Disciple) -->
-    <circle cx="160" cy="230" r="32" fill="#94a3b8"/>
-    <path d="M120 330 C120 285 200 285 200 330 Z" fill="#94a3b8" opacity="0.85"/>
+    <circle cx="156" cy="232" r="32" fill="#9cc7e4" opacity="0.9" />
+    <path d="M116 332 C116 285 196 285 196 332 Z" fill="#9cc7e4" opacity="0.8" />
 
     <!-- Right Member (Disciple) -->
-    <circle cx="352" cy="230" r="32" fill="#94a3b8"/>
-    <path d="M312 330 C312 285 392 285 392 330 Z" fill="#94a3b8" opacity="0.85"/>
+    <circle cx="356" cy="232" r="32" fill="#9cc7e4" opacity="0.9" />
+    <path d="M316 332 C316 285 396 285 396 332 Z" fill="#9cc7e4" opacity="0.8" />
 
-    <!-- Dynamic Wave / Onda Symbol -->
-    <path d="M136 380 Q 196 350, 256 380 T 376 380" fill="none" stroke="#f59e0b" stroke-width="12" stroke-linecap="round"/>
+    <!-- Dynamic Propagating Wave Arc -->
+    <path d="M128 382 Q 256 340, 384 382" fill="none" stroke="#79caab" stroke-width="10" stroke-linecap="round" opacity="0.95" />
   </g>
 </svg>

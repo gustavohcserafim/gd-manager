@@ -1,5 +1,5 @@
 {
-  "name": "GD Manager - Onda Mooca",
+  "name": "GD Manager - Igreja Onda",
   "short_name": "GD Manager",
   "description": "Gestão do GD (Grupo de Discípulos) da Igreja Onda Mooca",
   "lang": "pt-BR",
@@ -7,8 +7,8 @@
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
+  "background_color": "#181e5f",
+  "theme_color": "#181e5f",
   "categories": ["utilities", "lifestyle"],
   "icons": [
     {

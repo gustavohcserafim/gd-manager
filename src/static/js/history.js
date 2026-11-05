@@ -10,21 +10,21 @@ export function initHistory() {
 
   function switchTab(target) {
     if (target === "history") {
-      tabMembers.classList.remove("border-amber-500", "text-amber-400");
-      tabMembers.classList.add("border-transparent", "text-slate-400");
+      tabMembers.classList.remove("border-onda-blue-500", "text-white", "font-semibold");
+      tabMembers.classList.add("border-transparent", "text-white/60", "font-medium");
 
-      tabHistory.classList.remove("border-transparent", "text-slate-400");
-      tabHistory.classList.add("border-amber-500", "text-amber-400");
+      tabHistory.classList.remove("border-transparent", "text-white/60", "font-medium");
+      tabHistory.classList.add("border-onda-blue-500", "text-white", "font-semibold");
 
       viewMembers.classList.add("hidden");
       viewHistory.classList.remove("hidden");
       fetchHistory();
     } else {
-      tabHistory.classList.remove("border-amber-500", "text-amber-400");
-      tabHistory.classList.add("border-transparent", "text-slate-400");
+      tabHistory.classList.remove("border-onda-blue-500", "text-white", "font-semibold");
+      tabHistory.classList.add("border-transparent", "text-white/60", "font-medium");
 
-      tabMembers.classList.remove("border-transparent", "text-slate-400");
-      tabMembers.classList.add("border-amber-500", "text-amber-400");
+      tabMembers.classList.remove("border-transparent", "text-white/60", "font-medium");
+      tabMembers.classList.add("border-onda-blue-500", "text-white", "font-semibold");
 
       viewHistory.classList.add("hidden");
       viewMembers.classList.remove("hidden");
@@ -57,9 +57,9 @@ export function initHistory() {
       const isUpdate = item.actionType === "UPDATE_MEMBER";
       const isDelete = item.actionType === "DELETE_MEMBER";
 
-      const badgeColor = isCreate ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" :
-                         isUpdate ? "bg-blue-500/20 text-blue-400 border-blue-500/30" :
-                         "bg-rose-500/20 text-rose-400 border-rose-500/30";
+      const badgeColor = isCreate ? "bg-onda-mint/20 text-onda-mint border-onda-mint/40" :
+                         isUpdate ? "bg-onda-blue-600/30 text-onda-blue-light border-onda-blue-500/50" :
+                         "bg-rose-500/20 text-rose-300 border-rose-500/40";
 
       const actionLabel = isCreate ? "Novo Membro" :
                           isUpdate ? "Edição" : "Remoção";
@@ -67,16 +67,16 @@ export function initHistory() {
       const dateStr = formatDate(item.timestamp);
 
       const entry = document.createElement("div");
-      entry.className = "bg-slate-800/50 border border-slate-700/60 rounded-xl p-3 flex items-start justify-between gap-3";
+      entry.className = "glass-card p-3.5 flex items-start justify-between gap-3 text-white";
       entry.innerHTML = `
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-2 mb-1">
-            <span class="badge ${badgeColor} text-[9px] py-0 px-1.5">${actionLabel}</span>
-            <span class="text-xs font-bold text-white">${escapeHtml(item.memberName)}</span>
+            <span class="badge ${badgeColor} text-[9px] py-0 px-2">${actionLabel}</span>
+            <span class="font-sans text-xs font-bold text-white">${escapeHtml(item.memberName)}</span>
           </div>
-          <p class="text-xs text-slate-300">${escapeHtml(item.details || "")}</p>
-          <div class="flex items-center gap-2 mt-1.5 text-[10px] text-slate-400">
-            <span>Por <strong class="text-slate-200">${escapeHtml(item.userName)}</strong></span>
+          <p class="font-sans text-xs text-onda-offwhite/90">${escapeHtml(item.details || "")}</p>
+          <div class="flex items-center gap-2 mt-1.5 font-system text-[11px] text-onda-blue-light">
+            <span>Por <strong class="text-white">${escapeHtml(item.userName)}</strong></span>
             <span>•</span>
             <span>${dateStr}</span>
           </div>

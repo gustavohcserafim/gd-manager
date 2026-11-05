@@ -3,93 +3,165 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>GD Manager - Onda Mooca</title>
+  <title>GD Manager - Igreja Onda</title>
   <meta name="description" content="Gestão do GD (Grupo de Discípulos) da Igreja Onda Mooca">
-  <meta name="theme-color" content="#0f172a">
+  <meta name="theme-color" content="#181e5f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="GD Manager">
   <link rel="icon" type="image/svg+xml" href="/static/icons/icon.svg">
   <link rel="apple-touch-icon" href="/static/icons/icon.svg">
   <link rel="manifest" href="/static/manifest.json">
+
+  <!-- Google Fonts: Space Grotesk -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN & Official Onda Brandbook Tokens Configuration -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            onda: {
+              blue: {
+                900: '#181e5f',
+                800: '#11187e',
+                700: '#2027a7',
+                600: '#1f2bc8', // Primário Oficial
+                500: '#2537de', // Elétrico / Accent
+                light: '#9cc7e4',
+              },
+              offwhite: '#eeeee7',
+              dark: '#161616',
+              mint: '#79caab',
+              cream: '#ffffe6',
+              cyan: {
+                50: '#e5f4fe',
+                100: '#e3f3f7',
+              }
+            }
+          },
+          fontFamily: {
+            sans: ['"Space Grotesk"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            display: ['"Right Grotesk Compact Black"', '"Arial Black"', '"Space Grotesk"', 'sans-serif'],
+            condensed: ['"Right Grotesk Tight Dark"', 'Impact', '"Space Grotesk"', 'sans-serif'],
+            system: ['"SF Pro Display"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+          },
+          boxShadow: {
+            'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.25)',
+            'glass-glow': '0 0 24px rgba(37, 55, 222, 0.35)',
+          }
+        }
+      }
+    };
+  </script>
   <link rel="stylesheet" href="/static/css/app.css">
 </head>
-<body class="bg-slate-900 text-slate-100 flex flex-col min-h-screen">
+<body class="bg-onda-blue-900 text-onda-offwhite flex flex-col min-h-screen font-sans selection:bg-onda-blue-500 selection:text-white">
 
-  <!-- OFFLINE BANNER -->
-  <div id="offline-banner" class="hidden bg-amber-600 text-slate-900 font-semibold text-xs px-4 py-1.5 text-center shadow-md">
-    ⚡ Modo Offline — Exibindo registros locais salvos no dispositivo.
+  <!-- OFFLINE BANNER (Official Glassmorphic Pill) -->
+  <div id="offline-banner" class="hidden fixed top-3 left-1/2 -translate-x-1/2 z-50 glass-pill px-4 py-2 text-center text-xs font-sans font-medium text-onda-offwhite border border-onda-mint/40 shadow-glass flex items-center gap-2">
+    <span class="w-2 h-2 rounded-full bg-onda-mint animate-pulse"></span>
+    <span>Modo Offline — Exibindo registros locais salvos no dispositivo.</span>
   </div>
 
-  <!-- 1. PIN LOCK SCREEN -->
-  <div id="pin-screen" class="fixed inset-0 z-50 bg-slate-950 flex flex-col items-center justify-center p-6">
-    <div class="w-full max-w-xs flex flex-col items-center text-center">
-      <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center shadow-lg shadow-amber-500/20 mb-4">
-        <svg class="w-8 h-8 text-slate-950" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-        </svg>
+  <!-- 1. PIN LOCK SCREEN (Immersive Dark Wave & Glassmorphism) -->
+  <div id="pin-screen" class="fixed inset-0 z-50 bg-gradient-to-br from-onda-blue-900 via-onda-blue-800 to-onda-blue-900 flex flex-col items-center justify-center p-6 overflow-hidden">
+    <!-- Concentric wave support graphics -->
+    <div class="absolute inset-0 pointer-events-none opacity-15 flex items-center justify-center">
+      <svg class="w-[600px] h-[600px] text-onda-blue-500" viewBox="0 0 400 400" fill="none" stroke="currentColor">
+        <circle cx="200" cy="200" r="80" stroke-width="1.5" />
+        <circle cx="200" cy="200" r="130" stroke-width="1.5" stroke-dasharray="8 6" />
+        <circle cx="200" cy="200" r="180" stroke-width="2" opacity="0.6" />
+      </svg>
+    </div>
+
+    <!-- Glassmorphic Keypad Container -->
+    <div class="relative w-full max-w-xs flex flex-col items-center text-center p-6 rounded-3xl bg-white/10 backdrop-blur-xl border border-white/15 shadow-glass">
+      <!-- Wave Origin Emblem with Glow -->
+      <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-onda-blue-800 to-onda-blue-500 flex items-center justify-center shadow-glass-glow mb-4">
+        <div class="w-7 h-7 rounded-full bg-onda-blue-900 border border-white/40 flex items-center justify-center">
+          <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+        </div>
       </div>
 
-      <h1 class="text-2xl font-bold tracking-tight text-white mb-1">GD Manager</h1>
-      <p class="text-xs text-slate-400 mb-6">Igreja Onda Mooca • Acesso de Líderes</p>
+      <h1 class="font-display uppercase text-2xl tracking-tight text-white mb-1">GD Manager</h1>
+      <p class="font-system text-xs text-onda-blue-light mb-6">Igreja Onda Mooca • Acesso de Líderes</p>
 
       <!-- PIN dots -->
-      <div id="pin-dots" class="flex gap-4 justify-center mb-4 h-6"></div>
+      <div id="pin-dots" class="flex gap-4 justify-center mb-5 h-6"></div>
 
       <!-- Error message -->
-      <div id="pin-error" class="hidden text-rose-400 text-xs font-medium mb-4 min-h-[1.25rem]"></div>
+      <div id="pin-error" class="hidden text-rose-300 text-xs font-sans font-medium mb-4 min-h-[1.25rem]"></div>
 
       <!-- Keypad -->
-      <div id="pin-keypad" class="grid grid-cols-3 gap-3.5 w-full">
-        <button data-val="1" class="h-14 rounded-2xl bg-slate-800/80 hover:bg-slate-700 active:bg-slate-600 text-2xl font-semibold text-white shadow transition-all">1</button>
-        <button data-val="2" class="h-14 rounded-2xl bg-slate-800/80 hover:bg-slate-700 active:bg-slate-600 text-2xl font-semibold text-white shadow transition-all">2</button>
-        <button data-val="3" class="h-14 rounded-2xl bg-slate-800/80 hover:bg-slate-700 active:bg-slate-600 text-2xl font-semibold text-white shadow transition-all">3</button>
-        <button data-val="4" class="h-14 rounded-2xl bg-slate-800/80 hover:bg-slate-700 active:bg-slate-600 text-2xl font-semibold text-white shadow transition-all">4</button>
-        <button data-val="5" class="h-14 rounded-2xl bg-slate-800/80 hover:bg-slate-700 active:bg-slate-600 text-2xl font-semibold text-white shadow transition-all">5</button>
-        <button data-val="6" class="h-14 rounded-2xl bg-slate-800/80 hover:bg-slate-700 active:bg-slate-600 text-2xl font-semibold text-white shadow transition-all">6</button>
-        <button data-val="7" class="h-14 rounded-2xl bg-slate-800/80 hover:bg-slate-700 active:bg-slate-600 text-2xl font-semibold text-white shadow transition-all">7</button>
-        <button data-val="8" class="h-14 rounded-2xl bg-slate-800/80 hover:bg-slate-700 active:bg-slate-600 text-2xl font-semibold text-white shadow transition-all">8</button>
-        <button data-val="9" class="h-14 rounded-2xl bg-slate-800/80 hover:bg-slate-700 active:bg-slate-600 text-2xl font-semibold text-white shadow transition-all">9</button>
-        <button data-val="clear" class="h-14 rounded-2xl bg-slate-800/40 hover:bg-slate-700/60 text-xs font-bold text-slate-400 uppercase tracking-wider">Limpar</button>
-        <button data-val="0" class="h-14 rounded-2xl bg-slate-800/80 hover:bg-slate-700 active:bg-slate-600 text-2xl font-semibold text-white shadow transition-all">0</button>
-        <button data-val="backspace" class="h-14 rounded-2xl bg-slate-800/40 hover:bg-slate-700/60 flex items-center justify-center text-slate-400">
+      <div id="pin-keypad" class="grid grid-cols-3 gap-3 w-full">
+        <button data-val="1" class="h-14 rounded-2xl bg-white/10 hover:bg-white/20 active:bg-white/30 border border-white/10 text-2xl font-sans font-semibold text-white transition-all shadow">1</button>
+        <button data-val="2" class="h-14 rounded-2xl bg-white/10 hover:bg-white/20 active:bg-white/30 border border-white/10 text-2xl font-sans font-semibold text-white transition-all shadow">2</button>
+        <button data-val="3" class="h-14 rounded-2xl bg-white/10 hover:bg-white/20 active:bg-white/30 border border-white/10 text-2xl font-sans font-semibold text-white transition-all shadow">3</button>
+        <button data-val="4" class="h-14 rounded-2xl bg-white/10 hover:bg-white/20 active:bg-white/30 border border-white/10 text-2xl font-sans font-semibold text-white transition-all shadow">4</button>
+        <button data-val="5" class="h-14 rounded-2xl bg-white/10 hover:bg-white/20 active:bg-white/30 border border-white/10 text-2xl font-sans font-semibold text-white transition-all shadow">5</button>
+        <button data-val="6" class="h-14 rounded-2xl bg-white/10 hover:bg-white/20 active:bg-white/30 border border-white/10 text-2xl font-sans font-semibold text-white transition-all shadow">6</button>
+        <button data-val="7" class="h-14 rounded-2xl bg-white/10 hover:bg-white/20 active:bg-white/30 border border-white/10 text-2xl font-sans font-semibold text-white transition-all shadow">7</button>
+        <button data-val="8" class="h-14 rounded-2xl bg-white/10 hover:bg-white/20 active:bg-white/30 border border-white/10 text-2xl font-sans font-semibold text-white transition-all shadow">8</button>
+        <button data-val="9" class="h-14 rounded-2xl bg-white/10 hover:bg-white/20 active:bg-white/30 border border-white/10 text-2xl font-sans font-semibold text-white transition-all shadow">9</button>
+        <button data-val="clear" class="h-14 rounded-2xl bg-white/5 hover:bg-white/15 active:bg-white/25 border border-white/10 text-xs font-bold text-onda-blue-light uppercase tracking-wider">Limpar</button>
+        <button data-val="0" class="h-14 rounded-2xl bg-white/10 hover:bg-white/20 active:bg-white/30 border border-white/10 text-2xl font-sans font-semibold text-white transition-all shadow">0</button>
+        <button data-val="backspace" class="h-14 rounded-2xl bg-white/5 hover:bg-white/15 active:bg-white/25 border border-white/10 flex items-center justify-center text-onda-blue-light">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414-6.414a2 2 0 011.414-.586H19a2 2 0 012 2v10a2 2 0 01-2 2h-8.172a2 2 0 01-1.414-.586L3 12z"/>
           </svg>
         </button>
       </div>
-      <p class="text-[11px] text-slate-500 mt-6">PIN padrão inicial: 1234 (Pr. Pedro)</p>
+      <p class="font-system text-[11px] text-white/50 mt-6">PIN padrão inicial: 1234 (Pr. Pedro)</p>
     </div>
   </div>
 
   <!-- 2. MAIN APPLICATION -->
   <div id="app-screen" class="hidden flex-1 flex flex-col">
-    <!-- TOP NAVBAR -->
-    <header class="bg-slate-950/80 backdrop-blur sticky top-0 z-40 border-b border-slate-800">
-      <div class="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
-        <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center font-black text-slate-950 text-sm shadow">
-            GD
-          </div>
-          <div>
-            <h1 class="text-sm font-bold text-white leading-tight">GD Manager</h1>
-            <p class="text-[10px] text-slate-400 leading-none">Onda Mooca</p>
+    <!-- TOP NAVBAR WITH OFFICIAL HORIZONTAL VECTOR WORDMARK (Brandbook Oficial 2027) -->
+    <header class="bg-onda-blue-900/80 backdrop-blur-md sticky top-0 z-40 border-b border-white/10 shadow-glass">
+      <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+        
+        <!-- Official Horizontal Lowercase Wordmark -->
+        <div class="flex items-center gap-3">
+          <svg class="h-7 w-auto text-onda-offwhite shrink-0" viewBox="0 0 220 46" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="igreja onda" role="img">
+            <!-- Concentric wave icon mark -->
+            <circle cx="16" cy="23" r="12" stroke="currentColor" stroke-width="2.5" opacity="0.4"/>
+            <circle cx="16" cy="23" r="6" fill="#1f2bc8"/>
+            <path d="M16 11 C22 11, 28 17, 28 23" stroke="#2537de" stroke-width="2.5" stroke-linecap="round"/>
+            
+            <!-- Horizontal lowercase wordmark: "igreja onda" -->
+            <text x="36" y="29" fill="currentColor" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="20" letter-spacing="-0.03em">igreja onda</text>
+          </svg>
+
+          <!-- Divider & GD Manager Title -->
+          <div class="border-l border-white/20 pl-3">
+            <h1 class="font-display uppercase text-sm font-black text-white leading-tight">GD Manager</h1>
+            <p class="font-system text-[10px] text-onda-blue-light leading-none">Mooca</p>
           </div>
         </div>
 
+        <!-- Action Items & User Profile -->
         <div class="flex items-center gap-3">
-          <button id="btn-install-pwa" title="Instalar Aplicativo" class="hidden p-2 text-amber-400 hover:text-amber-300 rounded-lg hover:bg-slate-800 transition flex items-center gap-1.5 text-xs font-semibold">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <button id="btn-install-pwa" title="Instalar Aplicativo" class="hidden px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 active:bg-white/30 border border-white/20 text-xs font-sans font-medium text-onda-offwhite transition flex items-center gap-1.5 shadow">
+            <svg class="w-3.5 h-3.5 text-onda-blue-light" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
             </svg>
-            <span class="hidden md:inline">Instalar App</span>
+            <span class="hidden sm:inline">Instalar App</span>
           </button>
+
           <div class="text-right hidden sm:block">
-            <p id="user-greeting" class="text-xs font-semibold text-slate-200">Pr. Pedro</p>
-            <span id="user-role-badge" class="badge badge-lider text-[9px] py-0 px-1.5">Líder</span>
+            <p id="user-greeting" class="text-xs font-sans font-semibold text-onda-offwhite">Pr. Pedro</p>
+            <span id="user-role-badge" class="badge badge-lider text-[9px] py-0 px-2">Líder</span>
           </div>
-          <button id="btn-logout" title="Bloquear / Sair" class="p-2 text-slate-400 hover:text-rose-400 rounded-lg hover:bg-slate-800 transition">
+
+          <button id="btn-logout" title="Bloquear / Sair" class="p-2 text-white/60 hover:text-rose-400 rounded-xl hover:bg-white/10 transition">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
             </svg>
@@ -98,93 +170,93 @@
       </div>
 
       <!-- TABS -->
-      <div class="max-w-4xl mx-auto px-4 flex border-t border-slate-800/60">
-        <button id="tab-members" class="flex-1 sm:flex-none py-2.5 px-6 text-xs font-semibold border-b-2 border-amber-500 text-amber-400 flex items-center justify-center gap-2 transition">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <div class="max-w-4xl mx-auto px-4 flex border-t border-white/10">
+        <button id="tab-members" class="flex-1 sm:flex-none py-3 px-6 text-xs font-sans font-semibold border-b-2 border-onda-blue-500 text-white flex items-center justify-center gap-2 transition">
+          <svg class="w-4 h-4 text-onda-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
           </svg>
-          Membros (<span id="members-count">0</span>)
+          <span>Membros (<span id="members-count">0</span>)</span>
         </button>
-        <button id="tab-history" class="flex-1 sm:flex-none py-2.5 px-6 text-xs font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center justify-center gap-2 transition">
+        <button id="tab-history" class="flex-1 sm:flex-none py-3 px-6 text-xs font-sans font-medium border-b-2 border-transparent text-white/60 hover:text-white flex items-center justify-center gap-2 transition">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
-          Histórico de Atividades
+          <span>Histórico de Atividades</span>
         </button>
       </div>
     </header>
 
     <!-- CONTENT VIEWS -->
-    <main class="max-w-4xl w-full mx-auto p-4 flex-1">
+    <main class="max-w-4xl w-full mx-auto p-4 sm:p-6 flex-1">
 
       <!-- VIEW: MEMBERS ROSTER -->
       <section id="view-members" class="space-y-4">
         <!-- ACTION BAR -->
         <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-          <!-- SEARCH INPUT -->
+          <!-- SEARCH INPUT (Glassmorphic) -->
           <div class="relative flex-1">
-            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 text-onda-blue-light absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
-            <input type="text" id="search-input" placeholder="Buscar por nome..." class="w-full bg-slate-800/80 border border-slate-700/80 text-white placeholder-slate-400 text-xs rounded-xl pl-9 pr-4 py-2.5 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition">
+            <input type="text" id="search-input" placeholder="Buscar por nome..." class="w-full bg-white/10 border border-white/20 text-white placeholder-white/40 text-xs rounded-xl pl-9 pr-4 py-2.5 focus:outline-none focus:border-onda-blue-500 focus:ring-1 focus:ring-onda-blue-500 transition">
           </div>
 
-          <!-- ADD MEMBER BUTTON -->
-          <button id="btn-add-member" class="bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 font-bold text-xs px-4 py-2.5 rounded-xl flex items-center justify-center gap-1.5 shadow-md shadow-amber-500/10 transition">
+          <!-- ADD MEMBER BUTTON (Onda Blue 600 CTA) -->
+          <button id="btn-add-member" class="bg-onda-blue-600 hover:bg-onda-blue-500 active:bg-onda-blue-700 text-white font-sans font-semibold text-xs px-4 py-2.5 rounded-xl flex items-center justify-center gap-1.5 shadow-md shadow-onda-blue-600/30 transition duration-200">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
             </svg>
-            Novo Membro
+            <span>Novo Membro</span>
           </button>
         </div>
 
         <!-- POSITION FILTERS -->
         <div class="flex gap-2 overflow-x-auto pb-1 text-xs no-scrollbar">
-          <button data-filter="" class="filter-chip px-3 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-bold transition">Todos</button>
-          <button data-filter="Líder" class="filter-chip px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-medium transition">Líderes</button>
-          <button data-filter="Núcleo" class="filter-chip px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-medium transition">Núcleo</button>
-          <button data-filter="Membro" class="filter-chip px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 font-medium transition">Membros</button>
+          <button data-filter="" class="filter-chip px-3 py-1.5 rounded-lg bg-onda-blue-600 text-white font-semibold transition shadow-sm">Todos</button>
+          <button data-filter="Líder" class="filter-chip px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/10 text-white/80 font-medium transition">Líderes</button>
+          <button data-filter="Núcleo" class="filter-chip px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/10 text-white/80 font-medium transition">Núcleo</button>
+          <button data-filter="Membro" class="filter-chip px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/10 text-white/80 font-medium transition">Membros</button>
         </div>
 
         <!-- MEMBERS LIST CONTAINER -->
-        <div id="members-list" class="space-y-2.5">
-          <!-- Dynamically populated -->
+        <div id="members-list" class="space-y-3">
+          <!-- Dynamically populated with glassmorphic cards -->
         </div>
 
-        <!-- EMPTY STATE -->
-        <div id="empty-state" class="hidden text-center py-12 px-4 bg-slate-800/30 rounded-2xl border border-dashed border-slate-800">
-          <div class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center mx-auto mb-3 text-slate-500">
+        <!-- EMPTY STATE (Glassmorphic) -->
+        <div id="empty-state" class="hidden text-center py-12 px-4 rounded-3xl bg-white/5 border border-dashed border-white/15">
+          <div class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center mx-auto mb-3 text-onda-blue-light">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
             </svg>
           </div>
-          <h3 class="text-sm font-bold text-white mb-1">Nenhum membro encontrado</h3>
-          <p class="text-xs text-slate-400 max-w-xs mx-auto">Cadastre o primeiro participante do seu GD para começar a gestão.</p>
+          <h3 class="font-sans font-bold text-sm text-white mb-1">Nenhum membro encontrado</h3>
+          <p class="font-system text-xs text-onda-blue-light max-w-xs mx-auto">Cadastre o primeiro participante do seu GD para viver o extraordinário juntos.</p>
         </div>
       </section>
 
       <!-- VIEW: ACTIVITY HISTORY -->
       <section id="view-history" class="hidden space-y-3">
         <div class="flex items-center justify-between mb-2">
-          <h2 class="text-sm font-bold text-white">Histórico de Atividades</h2>
-          <span class="text-[11px] text-slate-400">Auditoria cronológica</span>
+          <h2 class="font-display uppercase text-sm font-bold text-white tracking-wide">Histórico de Atividades</h2>
+          <span class="font-system text-[11px] text-onda-blue-light">Auditoria cronológica</span>
         </div>
-        <div id="history-timeline" class="space-y-2">
-          <!-- Dynamically populated -->
+        <div id="history-timeline" class="space-y-2.5">
+          <!-- Dynamically populated with glassmorphic cards -->
         </div>
-        <div id="history-empty" class="hidden text-center py-12 text-xs text-slate-400">
+        <div id="history-empty" class="hidden text-center py-12 text-xs font-system text-white/50">
           Nenhuma atividade registrada até o momento.
         </div>
       </section>
     </main>
   </div>
 
-  <!-- 3. MODAL: MEMBER FORM (ADD / EDIT) -->
+  <!-- 3. MODAL: MEMBER FORM (ADD / EDIT) - Glassmorphism Official Container -->
   <div id="member-modal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-md p-5 shadow-2xl space-y-4">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-        <h2 id="modal-title" class="text-base font-bold text-white">Novo Membro</h2>
-        <button id="modal-close" class="text-slate-400 hover:text-white p-1 rounded-lg">
+    <div class="glass-modal w-full max-w-md p-6 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-white/10">
+        <h2 id="modal-title" class="font-display uppercase text-base font-bold text-white tracking-wide">Novo Membro</h2>
+        <button id="modal-close" class="text-white/60 hover:text-white p-1 rounded-lg hover:bg-white/10 transition">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
           </svg>
@@ -195,57 +267,57 @@
         <input type="hidden" id="member-id">
 
         <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Nome Completo *</label>
-          <input type="text" id="form-name" required placeholder="Ex: Lucas Silva" class="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl px-3 py-2.5 focus:outline-none focus:border-amber-500">
+          <label class="block font-system text-xs font-semibold text-onda-offwhite mb-1">Nome Completo *</label>
+          <input type="text" id="form-name" required placeholder="Ex: Lucas Silva" class="w-full bg-white/10 border border-white/20 text-white text-xs rounded-xl px-3 py-2.5 focus:outline-none focus:border-onda-blue-500 transition">
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Telefone / WhatsApp *</label>
-          <input type="tel" id="form-phone" required placeholder="(11) 98765-4321" class="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl px-3 py-2.5 focus:outline-none focus:border-amber-500">
-          <p class="text-[10px] text-slate-500 mt-1">Formato: DDD + 8 ou 9 dígitos. Deve ser único.</p>
+          <label class="block font-system text-xs font-semibold text-onda-offwhite mb-1">Telefone / WhatsApp *</label>
+          <input type="tel" id="form-phone" required placeholder="(11) 98765-4321" class="w-full bg-white/10 border border-white/20 text-white text-xs rounded-xl px-3 py-2.5 focus:outline-none focus:border-onda-blue-500 transition">
+          <p class="font-system text-[10px] text-onda-blue-light mt-1">Formato: DDD + 8 ou 9 dígitos. Deve ser único.</p>
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Data de Aniversário *</label>
-          <input type="text" id="form-birthdate" required placeholder="DD/MM/AAAA ou DD/MM" class="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl px-3 py-2.5 focus:outline-none focus:border-amber-500">
-          <p class="text-[10px] text-slate-500 mt-1">Ex: 15/03/1998 ou 15/03 (ano opcional).</p>
+          <label class="block font-system text-xs font-semibold text-onda-offwhite mb-1">Data de Aniversário *</label>
+          <input type="text" id="form-birthdate" required placeholder="DD/MM/AAAA ou DD/MM" class="w-full bg-white/10 border border-white/20 text-white text-xs rounded-xl px-3 py-2.5 focus:outline-none focus:border-onda-blue-500 transition">
+          <p class="font-system text-[10px] text-onda-blue-light mt-1">Ex: 15/03/1998 ou 15/03 (ano opcional).</p>
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Posição no GD *</label>
-          <select id="form-position" required class="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl px-3 py-2.5 focus:outline-none focus:border-amber-500">
+          <label class="block font-system text-xs font-semibold text-onda-offwhite mb-1">Posição no GD *</label>
+          <select id="form-position" required class="w-full bg-onda-blue-900 border border-white/20 text-white text-xs rounded-xl px-3 py-2.5 focus:outline-none focus:border-onda-blue-500 transition">
             <option value="Membro">Membro</option>
             <option value="Núcleo">Núcleo</option>
             <option value="Líder">Líder</option>
           </select>
         </div>
 
-        <div id="form-error" class="hidden text-rose-400 text-xs font-medium p-2.5 rounded-lg bg-rose-500/10 border border-rose-500/20"></div>
+        <div id="form-error" class="hidden text-rose-300 text-xs font-system font-medium p-2.5 rounded-xl bg-rose-500/20 border border-rose-500/30"></div>
 
         <div class="flex gap-2 pt-2">
-          <button type="button" id="modal-cancel" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold py-2.5 rounded-xl transition">Cancelar</button>
-          <button type="submit" id="modal-submit" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold py-2.5 rounded-xl transition">Salvar</button>
+          <button type="button" id="modal-cancel" class="flex-1 bg-white/10 hover:bg-white/20 border border-white/15 text-white/80 text-xs font-bold py-2.5 rounded-xl transition">Cancelar</button>
+          <button type="submit" id="modal-submit" class="flex-1 bg-onda-blue-600 hover:bg-onda-blue-500 active:bg-onda-blue-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-md transition duration-200">Salvar</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- 4. MODAL: DELETE CONFIRMATION -->
+  <!-- 4. MODAL: DELETE CONFIRMATION (Glassmorphic) -->
   <div id="delete-modal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-sm p-5 shadow-2xl space-y-4 text-center">
-      <div class="w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto">
+    <div class="glass-modal w-full max-w-sm p-6 space-y-4 text-center">
+      <div class="w-12 h-12 rounded-full bg-rose-500/20 border border-rose-500/30 text-rose-300 flex items-center justify-center mx-auto shadow-inner">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
         </svg>
       </div>
 
       <div>
-        <h3 class="text-sm font-bold text-white mb-1">Confirmar Remoção</h3>
-        <p class="text-xs text-slate-400">Tem certeza que deseja remover <span id="delete-member-name" class="font-bold text-white"></span> do GD?</p>
+        <h3 class="font-display uppercase text-sm font-bold text-white mb-1">Confirmar Remoção</h3>
+        <p class="font-system text-xs text-onda-blue-light">Tem certeza que deseja remover <span id="delete-member-name" class="font-bold text-white"></span> do GD?</p>
       </div>
 
       <div class="flex gap-2 pt-2">
-        <button id="btn-cancel-delete" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold py-2.5 rounded-xl transition">Cancelar</button>
+        <button id="btn-cancel-delete" class="flex-1 bg-white/10 hover:bg-white/20 border border-white/15 text-white/80 text-xs font-bold py-2.5 rounded-xl transition">Cancelar</button>
         <button id="btn-confirm-delete" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold py-2.5 rounded-xl transition">Confirmar</button>
       </div>
     </div>

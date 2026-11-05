@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IgrejaOndaDesignTokensContract",
+  "version": "2027.1.0",
+  "colors": {
+    "onda-blue-900": "#181e5f",
+    "onda-blue-800": "#11187e",
+    "onda-blue-700": "#2027a7",
+    "onda-blue-600": "#1f2bc8",
+    "onda-blue-500": "#2537de",
+    "onda-blue-light": "#9cc7e4",
+    "onda-offwhite": "#eeeee7",
+    "onda-dark": "#161616",
+    "onda-mint": "#79caab",
+    "onda-cream": "#ffffe6",
+    "onda-cyan-100": "#e5f4fe",
+    "onda-cyan-200": "#e3f3f7",
+    "onda-white": "#ffffff"
+  },
+  "fonts": {
+    "sans": ["Space Grotesk", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+    "display": ["Right Grotesk Compact Black", "Arial Black", "Space Grotesk", "sans-serif"],
+    "condensed": ["Right Grotesk Tight Dark", "Impact", "Space Grotesk", "sans-serif"],
+    "system": ["SF Pro Display", "-apple-system", "BlinkMacSystemFont", "Inter", "sans-serif"]
+  },
+  "shadows": {
+    "glass": "0 8px 32px 0 rgba(0, 0, 0, 0.25)",
+    "glass-glow": "0 0 24px rgba(37, 55, 222, 0.35)"
+  },
+  "gradients": {
+    "dark-wave": "linear-gradient(135deg, #181e5f 0%, #11187e 50%, #1f2bc8 100%)",
+    "onda-glow": "radial-gradient(circle at 80% 20%, rgba(37, 55, 222, 0.25) 0%, transparent 60%)"
+  },
+  "radii": {
+    "pill": "9999px",
+    "card": "1.5rem",
+    "modal": "1.5rem",
+    "control": "0.75rem"
+  }
+}
